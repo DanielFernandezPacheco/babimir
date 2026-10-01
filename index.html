@@ -2,81 +2,117 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ff4f9a">
+<meta name="robots" content="noindex">
 <title>Babi vs. el MIR</title>
 <meta name="description" content="El tracker oficial (y muy serio) de los simulacros MIR de Babi.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>">
 <style>
 :root{
   --bg:#fff7f0; --card:#ffffff; --ink:#2b2140; --muted:#7a6f8f;
-  --pink:#ff4f9a; --purple:#7c4dff; --yellow:#ffd23f; --green:#19b37a; --red:#ff5d5d;
+  --pink:#ff4f9a; --purple:#7c4dff; --orange:#ff8a00; --yellow:#ffd23f; --green:#19b37a; --red:#ff5d5d;
   --line:#efe3f5; --shadow:0 6px 0 rgba(43,33,64,.9);
+  --accent:var(--pink);
 }
 @media (prefers-color-scheme:dark){
   :root{--bg:#1d1530;--card:#2a1f45;--ink:#fff3e6;--muted:#b3a7cc;--line:#413463;--shadow:0 6px 0 rgba(0,0,0,.6)}
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;
-  background-image:radial-gradient(var(--line) 2px,transparent 2px);background-size:26px 26px}
-main{max-width:880px;margin:0 auto;padding:20px 16px 60px}
-h1{font-size:clamp(2rem,7vw,3.4rem);margin:10px 0 0;line-height:1;letter-spacing:-1px}
+  background-image:radial-gradient(var(--line) 2px,transparent 2px);background-size:26px 26px;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+main{max-width:880px;margin:0 auto;padding:16px 14px 50px}
+h1{font-size:clamp(1.9rem,8vw,3.4rem);margin:8px 0 0;line-height:1;letter-spacing:-1px}
 h1 span{color:var(--pink)}
-.tag{color:var(--muted);font-size:1.05rem;margin:8px 0 22px;min-height:1.4em}
-.card{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:18px;box-shadow:var(--shadow);margin-bottom:26px}
-.card h2{margin:0 0 12px;font-size:1.2rem}
-form{display:grid;grid-template-columns:2fr 1.2fr 1fr auto;gap:10px;align-items:end}
-label{display:flex;flex-direction:column;font-size:.8rem;font-weight:700;color:var(--muted);gap:4px}
-input{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;width:100%}
+.tag{color:var(--muted);font-size:1rem;margin:8px 0 16px;min-height:1.4em}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:16px;box-shadow:var(--shadow);margin-bottom:22px}
+.card h2{margin:0 0 12px;font-size:1.15rem}
+label{display:flex;flex-direction:column;font-size:.8rem;font-weight:800;color:var(--muted);gap:4px;min-width:0}
+input{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--ink);border-radius:12px;padding:12px;width:100%;min-height:48px}
 input:focus{outline:3px solid var(--purple)}
-button{font:inherit;font-weight:800;cursor:pointer;border:2px solid var(--ink);border-radius:12px;padding:11px 16px;background:var(--pink);color:#fff;box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+button{font:inherit;font-weight:800;cursor:pointer;border:2px solid var(--ink);border-radius:12px;padding:12px 16px;min-height:48px;background:var(--pink);color:#fff;box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;touch-action:manipulation}
 button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
-button.ghost{background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--ink);padding:8px 12px;font-size:.85rem}
-@media(max-width:640px){form{grid-template-columns:1fr 1fr}form label:first-child{grid-column:1/-1}form button{grid-column:1/-1}}
+button.ghost{background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--ink);padding:8px 12px;min-height:44px;font-size:.85rem}
+
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;position:sticky;top:0;z-index:5;padding:8px 0;background:var(--bg)}
+.tab{background:var(--card);color:var(--ink);padding:8px 4px;font-size:.85rem;line-height:1.2;box-shadow:0 3px 0 var(--ink)}
+.tab b{display:block;font-size:1.3rem}
+.tab.on{background:var(--c);color:#fff}
+
+/* form */
+form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
+form .full{grid-column:1/-1}
 .hint{font-size:.8rem;color:var(--muted);margin:10px 0 0}
+.formbtns{display:flex;gap:10px}.formbtns button{flex:1}
+.formbtns .ghost{flex:0 0 auto}
+
 .verdict{display:flex;gap:14px;align-items:center}
-.verdict .emoji{font-size:3rem;animation:bob 2s ease-in-out infinite}
-.verdict p{margin:0;font-size:1.15rem;font-weight:700}
+.verdict .emoji{font-size:2.8rem;animation:bob 2s ease-in-out infinite}
+.verdict p{margin:0;font-size:1.05rem;font-weight:700}
 @keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
-.stat{background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:12px;text-align:center;box-shadow:0 4px 0 var(--ink)}
-.stat b{display:block;font-size:1.7rem}
-.stat small{color:var(--muted);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.stat{background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:10px 4px;text-align:center;box-shadow:0 4px 0 var(--ink)}
+.stat b{display:block;font-size:1.4rem}
+.stat small{color:var(--muted);font-weight:700;font-size:.75rem}
 .stat:nth-child(1){background:var(--yellow);color:#2b2140}.stat:nth-child(1) small{color:#4a3f66}
-@media(max-width:640px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.stat b{font-size:1.6rem}.card{padding:14px}}
+
 .chartwrap{position:relative}
-svg{width:100%;height:auto;display:block;overflow:visible}
-.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:10px;font-size:.85rem;font-weight:700;white-space:nowrap;transform:translate(-50%,-130%);opacity:0;transition:opacity .1s}
-.goalrow{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:700;color:var(--muted);margin-top:8px}
-.goalrow input{width:90px;padding:6px 8px}
+svg{width:100%;height:auto;display:block;overflow:visible;touch-action:manipulation}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:10px;font-size:.85rem;font-weight:700;white-space:nowrap;transform:translate(-50%,-130%);opacity:0;transition:opacity .1s;z-index:2}
+.goalrow{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700;color:var(--muted);margin-top:10px}
+.goalrow input{width:96px;padding:8px;min-height:44px}
+
 ul{list-style:none;margin:0;padding:0}
-li{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:2px dashed var(--line)}
+li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:2px dashed var(--line)}
 li:last-child{border:0}
-li .n{flex:1;font-weight:800}li .n small{display:block;color:var(--muted);font-weight:600}
-li .v{font-size:1.2rem;font-weight:900}
-li .d{font-size:.8rem;font-weight:800;padding:2px 8px;border-radius:99px}
+li .n{flex:1;font-weight:800;min-width:0}
+li .n small{display:block;color:var(--muted);font-weight:600;font-size:.78rem}
+li .v{font-size:1.15rem;font-weight:900}
+li .d{font-size:.78rem;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap}
 .up{background:#d6f7e8;color:#0b7a50}.down{background:#ffe0e0;color:#b32a2a}.eq{background:var(--line);color:var(--muted)}
-li button.x{background:transparent;color:var(--muted);border:0;box-shadow:none;padding:4px 8px;font-size:1.1rem}
+li button.x{background:transparent;color:var(--muted);border:0;box-shadow:none;padding:0;width:44px;min-height:44px;font-size:1.1rem}
 .empty{text-align:center;color:var(--muted);padding:20px}
 footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
 .conf{position:fixed;top:-20px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* lock */
+#lock{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);
+  background-image:radial-gradient(var(--line) 2px,transparent 2px);background-size:26px 26px}
+#lock .card{max-width:360px;width:100%;text-align:center;margin:0}
+#lock .big{font-size:3.4rem}
+#lock p{color:var(--muted);margin:6px 0 14px}
+#lock input{text-align:center;margin-bottom:12px}
+#lock button{width:100%}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#err{color:var(--red);font-weight:800;min-height:1.3em;margin:0 0 8px}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
-<main>
+
+<div id="lock">
+  <div class="card" id="lockcard">
+    <div class="big">🔒</div>
+    <h2>Zona solo para doctoras</h2>
+    <p>Si no eres Babi, media vuelta. El estetoscopio es para mirar, no para tocar.</p>
+    <form id="lf" style="display:block">
+      <input id="pw" type="password" placeholder="Contraseña" autocomplete="current-password" autocapitalize="none" autocorrect="off" enterkeyhint="go">
+      <div id="err"></div>
+      <button>Entrar 🩺</button>
+    </form>
+  </div>
+</div>
+
+<main id="app" hidden>
   <h1>Babi <span>vs.</span> el MIR 🩺</h1>
   <p class="tag" id="tag"></p>
 
-  <section class="card">
-    <h2>➕ Nuevo simulacro</h2>
-    <form id="f">
-      <label>Nombre<input id="name" placeholder="Simulacro 1" autocomplete="off"></label>
-      <label>Fecha<input id="date" type="date" required></label>
-      <label>Neta<input id="neta" type="number" step="0.01" min="-70" max="200" inputmode="decimal" placeholder="0" required></label>
-      <button>Guardar 💾</button>
-    </form>
-    <p class="hint">Neta = aciertos − errores/3. Que no te engañe el 5 de Mercadona: aquí cuenta la neta.</p>
-  </section>
+  <div class="tabs" id="tabs"></div>
 
   <section class="card verdict" id="verdict" hidden>
     <div class="emoji" id="emoji"></div><p id="msg"></p>
@@ -85,9 +121,22 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
   <div class="stats" id="stats"></div>
 
   <section class="card">
-    <h2>📈 Evolución</h2>
-    <div class="chartwrap" id="cw"><svg id="chart" viewBox="0 0 700 320"></svg><div class="tip" id="tip"></div></div>
-    <div class="goalrow">🎯 Objetivo (neta): <input id="goal" type="number" step="1" min="0" max="200"></div>
+    <h2 id="ctitle">📈 Evolución</h2>
+    <div class="chartwrap" id="cw"><svg id="chart"></svg><div class="tip" id="tip"></div></div>
+    <div class="goalrow">🎯 Objetivo: <input id="goal" type="number" step="any" inputmode="decimal"></div>
+  </section>
+
+  <section class="card">
+    <h2 id="ftitle">➕ Nuevo simulacro</h2>
+    <form id="f">
+      <label class="full">Nombre<input id="name" placeholder="Simulacro 1" autocomplete="off"></label>
+      <label class="full">Fecha<input id="date" type="date" required></label>
+      <label>Neta<input id="neta" type="number" step="0.01" min="-70" max="200" inputmode="decimal" placeholder="—"></label>
+      <label>Perc. academia<input id="acad" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
+      <label>Perc. ReMIR<input id="remir" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
+      <div class="full formbtns"><button id="save">Guardar 💾</button><button type="button" class="ghost" id="cancel" hidden>Cancelar</button></div>
+    </form>
+    <p class="hint">Rellena lo que tengas: los percentiles suelen llegar un día después, así que luego puedes darle a ✏️ en el historial y completarlos. Neta = aciertos − errores/3. Percentil alto = mejor.</p>
   </section>
 
   <section class="card">
@@ -98,86 +147,136 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
   <footer>
     <button class="ghost" id="exp">⬇️ Copia de seguridad</button>
     <button class="ghost" id="imp">⬆️ Restaurar</button>
+    <button class="ghost" id="lockbtn">🔒 Bloquear</button>
     <input type="file" id="file" accept="application/json" hidden>
   </footer>
 </main>
 
 <script>
-const KEY='babimir.v1';
 const $=id=>document.getElementById(id);
-let state={sims:[],goal:130};
-try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.sims))state=s}catch(e){}
+const KEY='babimir.v1',AUTH='babimir.auth';
+const PW_HASH='b2471d941bf888366cf43813752ea2ebfef08254773cf116187cdd6d0463a50a';
+
+const M={
+  neta :{label:'Netas',      short:'Neta',        icon:'🎯',color:'#ff4f9a',unit:'netas',      min:-70,max:200,def:130},
+  acad :{label:'Academia',   short:'Percentil',   icon:'🏫',color:'#7c4dff',unit:'puntos de percentil',min:0,max:100,def:90},
+  remir:{label:'Grupo ReMIR',short:'Percentil',   icon:'👯',color:'#ff8a00',unit:'puntos de percentil',min:0,max:100,def:90},
+};
+const KEYS=Object.keys(M);
+
+/* ---------- estado ---------- */
+let state={sims:[],goals:{neta:130,acad:90,remir:90},tab:'neta'};
+try{
+  const s=JSON.parse(localStorage.getItem(KEY));
+  if(s&&Array.isArray(s.sims)){
+    state.sims=s.sims;
+    state.goals={...state.goals,...(s.goals||{}),...(s.goal!=null&&!s.goals?{neta:s.goal}:{})};
+    if(M[s.tab])state.tab=s.tab;
+  }
+}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+let editing=null;
+
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const fmt=n=>(Math.round(n*100)/100).toLocaleString('es-ES');
 const fdate=d=>new Date(d+'T12:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
-const sorted=()=>[...state.sims].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sortedAll=()=>[...state.sims].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+const has=(x,k)=>typeof x[k]==='number'&&!isNaN(x[k]);
+const series=k=>sortedAll().filter(x=>has(x,k));
 
-const tags=['Neta a neta, Babi se hace médica 💪','Plaza en mente, café en vena ☕','Cada simulacro es un Pokémon: hay que cazarlos todos','Las netas suben, la ojeras también 🧟‍♀️','Hoy no, 4 de Medicina Interna. Hoy sí: simulacro.','Futura Dra. Babi, ve reservando la bata 🥼'];
-$('tag').textContent=tags[Math.floor(Math.random()*tags.length)];
-$('date').value=today();
+/* ---------- contraseña ---------- */
+async function sha(t){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function unlock(){$('lock').hidden=true;$('app').hidden=false;init()}
+$('lf').onsubmit=async e=>{
+  e.preventDefault();
+  const h=await sha($('pw').value.trim().toLowerCase());
+  if(h===PW_HASH){try{localStorage.setItem(AUTH,h)}catch(_){}$('pw').value='';$('err').textContent='';unlock()}
+  else{$('err').textContent='Contraseña incorrecta 🧐';const c=$('lockcard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}
+};
+$('lockbtn').onclick=()=>{try{localStorage.removeItem(AUTH)}catch(_){}location.reload()};
 
-function verdict(s){
+/* ---------- textos ---------- */
+const tags=['Neta a neta, Babi se hace médica 💪','Plaza en mente, café en vena ☕','Cada simulacro es un Pokémon: hay que cazarlos todos','Las netas suben, las ojeras también 🧟‍♀️','Hoy no, 4 de Medicina Interna. Hoy sí: simulacro.','Futura Dra. Babi, ve reservando la bata 🥼','Mientras tanto, las del ReMIR respirando en tu nuca 👀'];
+
+function verdict(s,k){
+  const u=M[k].unit;
   if(!s.length)return null;
-  if(s.length===1)return['🐣','Primer simulacro en el bote. Lo difícil es empezar, lo demás es repetir 150 veces.'];
-  const last=s[s.length-1].neta,prev=s[s.length-2].neta,best=Math.max(...s.slice(0,-1).map(x=>x.neta)),d=last-prev;
-  if(last>best)return['🏆','¡RÉCORD PERSONAL! Que alguien avise al Ministerio de Sanidad.'];
-  if(d>=10)return['🚀','Saltito de '+fmt(d)+' netas. Esto ya no es estudiar, es hacer trampas (legales).'];
-  if(d>0)return['📈','Sube '+fmt(d)+'. Pasito a pasito, que Roma no se hizo en un simulacro.'];
-  if(d===0)return['😐','Idéntica neta. Estabilidad emocional, al menos.'];
-  if(d>-10)return['🫠','Baja '+fmt(-d)+'. Ha sido el simulacro que tenía mala cara. Siguiente.'];
-  return['🫂','Bajón de '+fmt(-d)+'. Respira, café, chocolate y a por el siguiente. Los simulacros mienten.'];
+  if(s.length===1)return['🐣','Primer dato en el bote. Lo difícil es empezar, lo demás es repetir 150 veces.'];
+  const v=s.map(x=>x[k]),last=v[v.length-1],prev=v[v.length-2],best=Math.max(...v.slice(0,-1)),d=last-prev;
+  const big=k==='neta'?10:8;
+  if(last>best)return['🏆',k==='neta'?'¡RÉCORD PERSONAL! Que alguien avise al Ministerio de Sanidad.':k==='acad'?'¡Mejor percentil de la academia hasta la fecha! Que lo sepan en la secretaría.':'¡Mejor puesto en el ReMIR! Las demás ya miran de reojo 😎'];
+  if(d>=big)return['🚀','Saltito de '+fmt(d)+' '+u+'. Esto ya no es estudiar, es hacer trampas (legales).'];
+  if(d>0)return['📈','Sube '+fmt(d)+' '+u+'. Pasito a pasito, que Roma no se hizo en un simulacro.'];
+  if(d===0)return['😐','Idéntico. Estabilidad emocional, al menos.'];
+  if(d>-big)return['🫠','Baja '+fmt(-d)+' '+u+'. Era un simulacro con mala cara. Siguiente.'];
+  return['🫂','Bajón de '+fmt(-d)+' '+u+'. Respira, café, chocolate y a por el siguiente. Los simulacros mienten.'];
 }
 
+/* ---------- render ---------- */
 function render(){
-  const s=sorted();
-  $('goal').value=state.goal;
-  // verdict
-  const v=verdict(s);$('verdict').hidden=!v;if(v){$('emoji').textContent=v[0];$('msg').textContent=v[1]}
-  // stats
-  const nets=s.map(x=>x.neta);
-  const avg=nets.length?nets.reduce((a,b)=>a+b,0)/nets.length:0;
-  const st=[['Última',nets.length?fmt(nets[nets.length-1]):'–'],['Mejor',nets.length?fmt(Math.max(...nets)):'–'],['Media',nets.length?fmt(avg):'–'],
-    ['Vs. primera',nets.length>1?(nets[nets.length-1]-nets[0]>=0?'+':'')+fmt(nets[nets.length-1]-nets[0]):'–']];
-  $('stats').innerHTML=st.map(([k,x])=>`<div class="stat"><b>${x}</b><small>${k}</small></div>`).join('');
-  // list
-  $('list').innerHTML=s.length?[...s].reverse().map((x,i,arr)=>{
-    const idx=s.indexOf(x),p=s[idx-1],d=p?x.neta-p.neta:null;
-    const badge=d===null?'':`<span class="d ${d>0?'up':d<0?'down':'eq'}">${d>0?'▲ +':d<0?'▼ ':'= '}${fmt(d)}</span>`;
-    return`<li><div class="n">${esc(x.name)}<small>${fdate(x.date)}</small></div>${badge}<span class="v">${fmt(x.neta)}</span><button class="x" data-id="${x.id}" title="Borrar">🗑️</button></li>`}).join('')
-    :'<li class="empty">Aún no hay simulacros. Los 200 de la tarde no se hacen solos 📚</li>';
-  chart(s);
-}
-const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const k=state.tab,m=M[k],s=series(k);
+  document.documentElement.style.setProperty('--accent',m.color);
+  $('tabs').innerHTML=KEYS.map(t=>{
+    const l=series(t).slice(-1)[0];
+    return`<button class="tab ${t===k?'on':''}" style="--c:${M[t].color}" data-t="${t}"><b>${M[t].icon}</b>${M[t].label}</button>`}).join('');
+  $('ctitle').textContent='📈 Evolución · '+m.label;
+  $('goal').value=state.goals[k]??'';
+  const v=verdict(s,k);$('verdict').hidden=!v;if(v){$('emoji').textContent=v[0];$('msg').textContent=v[1]}
+  const n=s.map(x=>x[k]),avg=n.length?n.reduce((a,b)=>a+b,0)/n.length:0;
+  const st=[['Última',n.length?fmt(n[n.length-1]):'–'],['Mejor',n.length?fmt(Math.max(...n)):'–'],['Media',n.length?fmt(avg):'–'],
+    ['Vs. primera',n.length>1?(n[n.length-1]-n[0]>=0?'+':'')+fmt(n[n.length-1]-n[0]):'–']];
+  $('stats').innerHTML=st.map(([a,b])=>`<div class="stat"><b>${b}</b><small>${a}</small></div>`).join('');
 
-function chart(s){
-  const svg=$('chart'),W=700,H=320,L=44,R=20,T=20,B=40;
+  const all=sortedAll();
+  $('list').innerHTML=all.length?[...all].reverse().map(x=>{
+    const has_k=has(x,k),idx=s.indexOf(x),p=idx>0?s[idx-1]:null,d=p?x[k]-p[k]:null;
+    const badge=d===null?'':`<span class="d ${d>0?'up':d<0?'down':'eq'}">${d>0?'▲ +':d<0?'▼ ':'= '}${fmt(d)}</span>`;
+    const sub=KEYS.map(t=>`${M[t].icon} ${has(x,t)?fmt(x[t]):'–'}`).join(' · ');
+    return`<li><div class="n">${esc(x.name)}<small>${fdate(x.date)} · ${sub}</small></div>${badge}<span class="v">${has_k?fmt(x[k]):'–'}</span>
+      <button class="x" data-ed="${x.id}" title="Editar">✏️</button><button class="x" data-id="${x.id}" title="Borrar">🗑️</button></li>`}).join('')
+    :'<li class="empty">Aún no hay simulacros. Los 200 de la tarde no se hacen solos 📚</li>';
+  chart(s,k);
+}
+
+function chart(s,k){
+  const svg=$('chart'),m=M[k],cw=$('cw');
+  const W=Math.max(260,Math.round(cw.clientWidth||340)),H=W<500?250:320,L=W<500?34:42,R=14,T=22,B=34;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const css=getComputedStyle(document.documentElement);
   const ink=css.getPropertyValue('--ink'),muted=css.getPropertyValue('--muted'),line=css.getPropertyValue('--line');
-  if(!s.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="${muted}" font-size="18" font-weight="700">Aquí aparecerá la curva de la gloria ✨</text>`;return}
-  const vals=s.map(x=>x.neta).concat(state.goal||0);
-  let lo=Math.floor((Math.min(...vals)-10)/10)*10,hi=Math.ceil((Math.max(...vals)+10)/10)*10;
-  if(hi-lo<40)hi=lo+40;
+  if(!s.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="${muted}" font-size="15" font-weight="700">Aquí aparecerá la curva de la gloria ✨</text>`;return}
+  const goal=state.goals[k];
+  const vals=s.map(x=>x[k]).concat(goal||[]);
+  let lo=Math.floor((Math.min(...vals)-8)/10)*10,hi=Math.ceil((Math.max(...vals)+8)/10)*10;
+  if(k!=='neta'){lo=Math.max(0,lo);hi=Math.min(100,hi)}
+  if(hi-lo<30){hi=Math.min(k==='neta'?1e9:100,lo+30);if(hi-lo<30)lo=hi-30}
   const X=i=>s.length===1?(L+W-R)/2:L+i*(W-L-R)/(s.length-1),Y=v=>T+(hi-v)*(H-T-B)/(hi-lo);
   let g='';
   const step=(hi-lo)/4;
-  for(let k=0;k<=4;k++){const v=lo+k*step,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="${line}" stroke-width="2"/><text x="${L-8}" y="${y+4}" text-anchor="end" font-size="12" fill="${muted}" font-weight="700">${Math.round(v)}</text>`}
-  if(state.goal){const y=Y(state.goal);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#19b37a" stroke-width="2.5" stroke-dasharray="7 6"/><text x="${W-R}" y="${y-6}" text-anchor="end" font-size="12" font-weight="800" fill="#19b37a">🎯 plaza soñada (${state.goal})</text>`}
-  const pts=s.map((x,i)=>[X(i),Y(x.neta)]);
+  for(let j=0;j<=4;j++){const v=lo+j*step,y=Y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="${line}" stroke-width="2"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="11" fill="${muted}" font-weight="700">${Math.round(v)}</text>`}
+  if(goal&&goal>=lo&&goal<=hi){const y=Y(goal);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#19b37a" stroke-width="2.5" stroke-dasharray="7 6"/><text x="${W-R}" y="${y-6}" text-anchor="end" font-size="11" font-weight="800" fill="#19b37a">🎯 objetivo (${fmt(goal)})</text>`}
+  const pts=s.map((x,i)=>[X(i),Y(x[k])]);
   const path=pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
   const area=path+` L${pts[pts.length-1][0]},${Y(lo)} L${pts[0][0]},${Y(lo)} Z`;
-  g+=`<defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f9a" stop-opacity=".35"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></linearGradient></defs>`;
-  if(s.length>1)g+=`<path d="${area}" fill="url(#gr)"/><path d="${path}" fill="none" stroke="#ff4f9a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
-  const bi=s.reduce((b,x,i)=>x.neta>s[b].neta?i:b,0);
+  g+=`<defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m.color}" stop-opacity=".35"/><stop offset="1" stop-color="${m.color}" stop-opacity="0"/></linearGradient></defs>`;
+  if(s.length>1)g+=`<path d="${area}" fill="url(#gr)"/><path d="${path}" fill="none" stroke="${m.color}" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const bi=s.reduce((b,x,i)=>x[k]>s[b][k]?i:b,0);
+  const every=Math.ceil(s.length/Math.max(1,Math.floor((W-L-R)/54)));
   pts.forEach((p,i)=>{
-    g+=`<circle cx="${p[0]}" cy="${p[1]}" r="8" fill="${i===bi?'#ffd23f':'#7c4dff'}" stroke="${ink}" stroke-width="3" data-i="${i}" style="cursor:pointer"/>`;
-    if(i===bi)g+=`<text x="${p[0]}" y="${p[1]-16}" text-anchor="middle" font-size="18">👑</text>`;
-    if(s.length<=12)g+=`<text x="${p[0]}" y="${H-14}" text-anchor="middle" font-size="11" fill="${muted}" font-weight="700">${fdate(s[i].date)}</text>`;
+    g+=`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="${i===bi?'#ffd23f':m.color}" stroke="${ink}" stroke-width="3"/>`;
+    if(i===bi)g+=`<text x="${p[0]}" y="${p[1]-14}" text-anchor="middle" font-size="16">👑</text>`;
+    if(i%every===0||i===s.length-1&&every===1)g+=`<text x="${p[0]}" y="${H-12}" text-anchor="middle" font-size="10.5" fill="${muted}" font-weight="700">${fdate(s[i].date)}</text>`;
+    g+=`<circle cx="${p[0]}" cy="${p[1]}" r="20" fill="transparent" data-i="${i}" style="cursor:pointer"/>`;
   });
   svg.innerHTML=g;
-  svg.querySelectorAll('circle').forEach(c=>{
-    const show=()=>{const i=+c.dataset.i,r=svg.getBoundingClientRect(),k=r.width/W,t=$('tip');
-      t.textContent=`${s[i].name}: ${fmt(s[i].neta)}`;t.style.left=pts[i][0]*k+'px';t.style.top=pts[i][1]*k+'px';t.style.opacity=1};
+  svg.querySelectorAll('circle[data-i]').forEach(c=>{
+    const show=()=>{const i=+c.dataset.i,t=$('tip');
+      t.textContent=`${s[i].name}: ${fmt(s[i][k])}`;t.style.left=Math.min(Math.max(pts[i][0],60),W-60)+'px';t.style.top=pts[i][1]+'px';t.style.opacity=1;
+      clearTimeout(show.t);show.t=setTimeout(()=>t.style.opacity=0,2500)};
     c.onmouseenter=show;c.onclick=show;c.onmouseleave=()=>$('tip').style.opacity=0;
   });
 }
@@ -190,23 +289,66 @@ function confetti(){
     document.body.appendChild(e);setTimeout(()=>e.remove(),4000)}
 }
 
+/* ---------- formulario ---------- */
+function resetForm(){
+  editing=null;$('f').reset();$('date').value=today();
+  $('ftitle').textContent='➕ Nuevo simulacro';$('save').textContent='Guardar 💾';$('cancel').hidden=true;
+}
+const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
+
 $('f').onsubmit=e=>{
   e.preventDefault();
-  const neta=parseFloat($('neta').value);if(isNaN(neta))return;
-  const prevBest=state.sims.length?Math.max(...state.sims.map(x=>x.neta)):-Infinity;
-  state.sims.push({id:Date.now(),name:$('name').value.trim()||'Simulacro '+(state.sims.length+1),date:$('date').value||today(),neta});
-  save();
-  $('name').value='';$('neta').value='';
-  render();
-  if(neta>prevBest&&state.sims.length>1)confetti();
+  const data={neta:num('neta'),acad:num('acad'),remir:num('remir')};
+  if(KEYS.every(k=>data[k]===null)){alert('Mete al menos un dato (neta o algún percentil) 🙏');return}
+  const prevBest={};KEYS.forEach(k=>{const v=state.sims.filter(x=>x.id!==editing&&has(x,k)).map(x=>x[k]);prevBest[k]=v.length?Math.max(...v):null});
+  const rec=KEYS.reduce((a,k)=>a||(data[k]!==null&&prevBest[k]!==null&&data[k]>prevBest[k]),false);
+  if(editing){
+    const x=state.sims.find(y=>y.id===editing);
+    if(x){x.name=$('name').value.trim()||x.name;x.date=$('date').value||x.date;KEYS.forEach(k=>x[k]=data[k])}
+  }else{
+    state.sims.push({id:Date.now(),name:$('name').value.trim()||'Simulacro '+(state.sims.length+1),date:$('date').value||today(),...data});
+    // salta a la pestaña del dato que acaba de meter si no hay dato en la actual
+    if(data[state.tab]===null){state.tab=KEYS.find(k=>data[k]!==null)}
+  }
+  save();resetForm();render();
+  if(rec)confetti();
 };
-$('list').onclick=e=>{const b=e.target.closest('.x');if(!b)return;
-  if(confirm('¿Borrar este simulacro? (¿tan mal fue? 👀)')){state.sims=state.sims.filter(x=>x.id!=b.dataset.id);save();render()}};
-$('goal').onchange=()=>{state.goal=parseFloat($('goal').value)||0;save();render()};
+$('cancel').onclick=resetForm;
+
+$('tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;state.tab=b.dataset.t;save();render()};
+$('list').onclick=e=>{
+  const d=e.target.closest('[data-id]'),ed=e.target.closest('[data-ed]');
+  if(d&&confirm('¿Borrar este simulacro? (¿tan mal fue? 👀)')){state.sims=state.sims.filter(x=>x.id!=d.dataset.id);if(editing==d.dataset.id)resetForm();save();render()}
+  if(ed){
+    const x=state.sims.find(y=>y.id==ed.dataset.ed);if(!x)return;
+    editing=x.id;$('name').value=x.name;$('date').value=x.date;
+    KEYS.forEach(k=>$(k).value=has(x,k)?x[k]:'');
+    $('ftitle').textContent='✏️ Editando simulacro';$('save').textContent='Actualizar ✅';$('cancel').hidden=false;
+    $('f').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+};
+$('goal').onchange=()=>{const v=parseFloat($('goal').value);state.goals[state.tab]=isNaN(v)?null:v;save();render()};
 $('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download='babimir-backup.json';a.click()};
 $('imp').onclick=()=>$('file').click();
-$('file').onchange=async e=>{try{const s=JSON.parse(await e.target.files[0].text());if(Array.isArray(s.sims)){state={sims:s.sims,goal:s.goal??130};save();render()}else alert('Ese archivo no parece mío 🤨')}catch(_){alert('Ese archivo no parece mío 🤨')}e.target.value=''};
-render();
+$('file').onchange=async e=>{
+  try{const s=JSON.parse(await e.target.files[0].text());
+    if(!Array.isArray(s.sims))throw 0;
+    state={sims:s.sims,goals:{...state.goals,...(s.goals||(s.goal!=null?{neta:s.goal}:{}))},tab:M[s.tab]?s.tab:'neta'};
+    save();render()}
+  catch(_){alert('Ese archivo no parece mío 🤨')}
+  e.target.value=''};
+
+let inited=false;
+function init(){
+  if(inited)return;inited=true;
+  $('tag').textContent=tags[Math.floor(Math.random()*tags.length)];
+  $('date').value=today();
+  render();
+  let rw=innerWidth;addEventListener('resize',()=>{if(innerWidth!==rw){rw=innerWidth;render()}});
+}
+/* arranque */
+let authed=false;try{authed=localStorage.getItem(AUTH)===PW_HASH}catch(_){}
+if(authed)unlock();
 </script>
 </body>
 </html>
