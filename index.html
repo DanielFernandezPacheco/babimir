@@ -28,11 +28,11 @@
 body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;
   background-image:radial-gradient(var(--line) 2px,transparent 2px);background-size:26px 26px;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-main{max-width:880px;margin:0 auto;padding:16px 14px 50px}
+main{max-width:880px;margin:0 auto;padding:16px 14px 110px}
 h1{font-size:clamp(1.9rem,8vw,3.4rem);margin:8px 0 0;line-height:1;letter-spacing:-1px}
 h1 span{color:var(--pink)}
 .tag{color:var(--muted);font-size:1rem;margin:8px 0 16px;min-height:1.4em}
-.card{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:16px;box-shadow:var(--shadow);margin-bottom:22px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px}
 .card h2{margin:0 0 12px;font-size:1.15rem}
 label{display:flex;flex-direction:column;font-size:.8rem;font-weight:800;color:var(--muted);gap:4px;min-width:0}
 input{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--ink);border-radius:12px;padding:12px;width:100%;min-height:48px}
@@ -42,7 +42,7 @@ button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
 button.ghost{background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--ink);padding:8px 12px;min-height:44px;font-size:.85rem}
 
 /* tabs */
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;position:sticky;top:0;z-index:5;padding:8px 0;background:var(--bg)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;position:sticky;top:0;z-index:5;padding:8px 0;background:var(--bg)}
 .tab{background:var(--card);color:var(--ink);padding:8px 4px;font-size:.85rem;line-height:1.2;box-shadow:0 3px 0 var(--ink)}
 .tab b{display:block;font-size:1.3rem}
 .tab.on{background:var(--c);color:#fff}
@@ -58,12 +58,13 @@ form .full{grid-column:1/-1}
 .verdict .emoji{font-size:2.8rem;animation:bob 2s ease-in-out infinite}
 .verdict p{margin:0;font-size:1.05rem;font-weight:700}
 @keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
-.stat{background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:10px 4px;text-align:center;box-shadow:0 4px 0 var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:10px 4px;text-align:center}
 .stat b{display:block;font-size:1.4rem}
 .stat small{color:var(--muted);font-weight:700;font-size:.75rem}
-.stat:nth-child(1){background:var(--yellow);color:#2b2140}.stat:nth-child(1) small{color:#4a3f66}
-@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.stat b{font-size:1.6rem}.card{padding:14px}}
+.stat em{display:block;font-style:normal;font-size:.75rem;font-weight:900;margin-top:2px}.stat em.up{background:none;color:#0b7a50}.stat em.down{background:none;color:#b32a2a}
+.stat:nth-child(1){background:var(--yellow);color:#2b2140;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}.stat:nth-child(1) small{color:#4a3f66}
+@media(max-width:520px){.stat b{font-size:1.3rem}.card{padding:14px}}
 
 .chartwrap{position:relative}
 svg{width:100%;height:auto;display:block;overflow:visible;touch-action:manipulation}
@@ -84,14 +85,14 @@ li .r{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 li .n{overflow-wrap:anywhere}
 li .n small{line-height:1.5}
 .empty{text-align:center;color:var(--muted);padding:20px}
-footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding-top:4px}
 .conf{position:fixed;top:-20px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 
 /* lock */
 #lock{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);
   background-image:radial-gradient(var(--line) 2px,transparent 2px);background-size:26px 26px}
-#lock .card{max-width:360px;width:100%;text-align:center;margin:0}
+#lock .card{max-width:360px;width:100%;text-align:center;margin:0;border:3px solid var(--ink);box-shadow:var(--shadow)}
 #lock .big{font-size:3.4rem}
 #lock p{color:var(--muted);margin:6px 0 14px}
 #lock input{text-align:center;margin-bottom:12px}
@@ -105,14 +106,10 @@ details{grid-column:1/-1;border:2px dashed var(--line);border-radius:12px;paddin
 summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-height:32px;display:flex;align-items:center}
 .calc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
 .calc small{grid-column:1/-1;color:var(--muted)}
-.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.badge{border:2px solid var(--ink);border-radius:14px;padding:10px;font-size:.82rem;font-weight:800;display:flex;gap:8px;align-items:center;background:var(--yellow);color:#2b2140}
-.badge span{font-size:1.5rem}
-.badge.off{background:transparent;color:var(--muted);border-style:dashed;border-color:var(--line);filter:grayscale(1);opacity:.7}
 .showpw{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;margin:-4px 0 12px;font-size:.85rem}
 .showpw input{width:20px;min-height:20px;padding:0}
 /* juego */
-.player{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--card),var(--card));margin-bottom:18px}
+.player{display:flex;gap:14px;align-items:center;border:3px solid var(--ink);box-shadow:var(--shadow);margin-bottom:16px}
 .av{font-size:2.6rem;width:64px;height:64px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
 .pi{flex:1;min-width:0}.pi b{display:block;font-size:1.02rem;line-height:1.2}.pi small{color:var(--muted);font-weight:700;font-size:.76rem}
 .xpbar{height:14px;background:var(--line);border:2px solid var(--ink);border-radius:99px;overflow:hidden;margin:6px 0 4px}
@@ -131,14 +128,36 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
 .cell.l1{background:#ffd9ea;border-color:#ffd9ea}.cell.l2{background:#ff9ac8;border-color:#ff9ac8}.cell.l3{background:#ff4f9a;border-color:#ff4f9a}.cell.l4{background:#7c4dff;border-color:#7c4dff}
 .cell.sim::after{content:'🩺';position:absolute;inset:0;font-size:9px;display:flex;align-items:center;justify-content:center}
 .srow{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
-.badges{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.badge{background:var(--card);color:var(--ink);border-color:var(--rc,var(--ink));border-left-width:6px;align-items:flex-start;box-shadow:0 3px 0 var(--rc,var(--ink))}
-.badge>div{flex:1;min-width:0}.badge b{display:block;font-size:.88rem}.badge small{display:block;color:var(--muted);font-weight:600;font-size:.76rem}
-.badge em{display:block;font-style:normal;color:var(--rc);font-size:.7rem;font-weight:900;margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
-.badge.off{box-shadow:none;border-style:dashed;border-color:var(--line);border-left-color:var(--line);filter:grayscale(1);opacity:.75}
-#locked{margin-top:10px}
-#toasts{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;z-index:98;pointer-events:none;padding:0 14px}
+/* logros: cuadrícula compacta */
+.achgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;padding-bottom:6px}
+.ach{aspect-ratio:1;min-height:0;padding:0;font-size:1.6rem;line-height:1;background:var(--card);border:3px solid var(--rc);border-radius:16px;box-shadow:none}
+.ach.off{border:2px dashed var(--line);filter:grayscale(1);opacity:.55}
+.ach.sel{outline:3px solid var(--ink);outline-offset:2px}
+.achinfo{background:var(--bg);border-radius:14px;padding:12px;margin:6px 0 14px;font-size:.88rem;min-height:3.2em}
+.achinfo b{display:block;font-size:1rem}.achinfo small{color:var(--muted);font-weight:700}.achinfo em{font-style:normal;font-weight:900;color:var(--rc);text-transform:uppercase;font-size:.72rem;letter-spacing:.3px}
+/* secciones plegables */
+details.fold{padding:0 16px;margin-bottom:16px;background:var(--card);border:2px solid var(--line);border-radius:18px}
+details.fold>summary{list-style:none;color:var(--ink);font-size:1.02rem;font-weight:900;min-height:54px;justify-content:space-between;gap:10px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:'▾';color:var(--muted);transition:transform .2s}
+details.fold[open]>summary::after{transform:rotate(180deg)}
+details.fold>summary small{color:var(--muted);font-weight:700;font-size:.78rem;margin-left:auto}
+details.fold>div{padding:0 0 14px}
+details.fold .quest:first-child{padding-top:0}
+/* botón + y hoja inferior */
+#fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:40;width:62px;height:62px;border-radius:50%;padding:0;font-size:2rem;line-height:1;display:flex;align-items:center;justify-content:center;background:var(--pink);color:#fff;box-shadow:0 5px 0 var(--ink)}
+#sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheetbg{position:absolute;inset:0;background:rgba(20,10,40,.55)}
+.panel{position:relative;background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border:3px solid var(--ink);border-bottom:0;border-radius:24px 24px 0 0;padding:14px 16px calc(20px + env(safe-area-inset-bottom));animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sh{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.seg{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--ink);padding:8px;min-height:46px;font-size:.9rem}
+.seg button.on{background:var(--pink);color:#fff}
+body.noscroll{overflow:hidden}
+#toasts{position:fixed;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;z-index:98;pointer-events:none;padding:0 14px}
 .toast{background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-size:.92rem;line-height:1.3;box-shadow:0 6px 18px rgba(0,0,0,.35);animation:pop .35s;max-width:420px;text-align:center}
+.toast button{pointer-events:auto;margin-left:12px;min-height:34px;padding:4px 12px;font-size:.85rem;background:var(--yellow);color:#2b2140;box-shadow:none}
 .toast.out{opacity:0;transform:translateY(10px);transition:.35s}
 @keyframes pop{from{transform:translateY(20px) scale(.9);opacity:0}}
 [hidden]{display:none!important}
@@ -167,10 +186,10 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
 
   <section class="card player" id="player"></section>
 
-  <section class="card">
-    <h2>🎮 Misiones</h2>
+  <details class="fold" id="questsd">
+    <summary><span id="questhead">🎮 Misiones</span></summary>
     <div id="quests"></div>
-  </section>
+  </details>
 
   <div class="tabs" id="tabs"></div>
 
@@ -188,58 +207,75 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
   </section>
 
   <section class="card">
-    <h2 id="ftitle">➕ Nuevo simulacro</h2>
-    <form id="f">
-      <label class="full">Nombre<input id="name" placeholder="Simulacro 1" autocomplete="off"></label>
-      <label class="full">Fecha<input id="date" type="date" required></label>
-      <label>Neta<input id="neta" type="number" step="0.01" min="-70" max="200" inputmode="decimal" placeholder="—"></label>
-      <label>Perc. academia<input id="acad" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
-      <label>Perc. ReMIR<input id="remir" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
-      <details>
-        <summary>🧮 Calcular la neta desde aciertos y errores</summary>
-        <div class="calc">
-          <label>Aciertos<input id="ok" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
-          <label>Errores<input id="ko" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
-          <small id="calcout">Neta = aciertos − errores/3. Se rellena sola arriba.</small>
-        </div>
-      </details>
-      <div class="full formbtns"><button id="save">Guardar 💾</button><button type="button" class="ghost" id="cancel" hidden>Cancelar</button></div>
-    </form>
-    <p class="hint">Rellena lo que tengas: los percentiles suelen llegar un día después, así que luego puedes darle a ✏️ en el historial y completarlos. Neta = aciertos − errores/3. Percentil alto = mejor.</p>
-  </section>
-
-  <section class="card">
-    <h2>📚 Registro de estudio</h2>
-    <div class="srow">
-      <label>Día<input id="sdate" type="date"></label>
-      <label>Horas<input id="shours" type="number" step="0.25" min="0" max="24" inputmode="decimal" placeholder="0"></label>
-    </div>
-    <div class="chips" style="margin:10px 0"><button type="button" class="ghost" data-h="1">1 h</button><button type="button" class="ghost" data-h="2">2 h</button><button type="button" class="ghost" data-h="4">4 h</button><button type="button" class="ghost" data-h="6">6 h</button><button type="button" id="sbtn" style="flex:1">Guardar estudio 📚</button></div>
-    <div class="strip" id="strip"></div>
-    <p class="hint" id="studysum"></p>
-    <p class="hint">Últimos 28 días: más oscuro = más horas · 🩺 = hubo simulacro · toca un día para editarlo.</p>
-  </section>
-
-  <section class="card">
-    <h2 id="achhead">🏅 Logros</h2>
-    <div class="badges" id="badges"></div>
-    <div class="badges" id="locked" hidden></div>
-    <p style="text-align:center;margin:12px 0 0"><button type="button" class="ghost" id="lockedbtn"></button></p>
-  </section>
-
-  <section class="card">
     <h2>🧾 Historial</h2>
     <ul id="list"></ul>
   </section>
 
+  <details class="fold" id="achd">
+    <summary><span id="achhead">🏅 Logros</span></summary>
+    <div>
+      <div class="achgrid" id="badges"></div>
+      <div class="achinfo" id="achinfo">Toca un logro para ver cómo conseguirlo 👆</div>
+    </div>
+  </details>
+
   <p class="hint" id="sync" style="text-align:center"></p>
-  <footer>
-    <button class="ghost" id="exp">⬇️ Copia de seguridad</button>
-    <button class="ghost" id="imp">⬆️ Restaurar</button>
-    <button class="ghost" id="lockbtn">🔒 Bloquear</button>
-    <button class="ghost" id="wipebtn">🧹 Borrar datos de este dispositivo</button>
-    <input type="file" id="file" accept="application/json" hidden>
-  </footer>
+  <details class="fold" id="settings">
+    <summary>⚙️ Ajustes y copias</summary>
+    <div>
+      <footer>
+        <button class="ghost" id="exp">⬇️ Copia de seguridad</button>
+        <button class="ghost" id="imp">⬆️ Restaurar</button>
+        <button class="ghost" id="lockbtn">🔒 Bloquear</button>
+        <button class="ghost" id="wipebtn">🧹 Borrar datos de este dispositivo</button>
+        <input type="file" id="file" accept="application/json" hidden>
+      </footer>
+    </div>
+  </details>
+
+  <button id="fab" aria-label="Añadir simulacro o estudio">＋</button>
+
+  <div id="sheet" hidden>
+    <div class="sheetbg" id="sheetbg"></div>
+    <div class="panel" role="dialog" aria-modal="true">
+      <div class="sh">
+        <div class="seg"><button type="button" class="on" data-s="sim">🩺 Simulacro</button><button type="button" data-s="study">📚 Estudio</button></div>
+        <button type="button" class="ghost" id="sheetx" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div id="pane-sim">
+        <h2 id="ftitle" style="margin:0 0 10px;font-size:1.1rem">➕ Nuevo simulacro</h2>
+        <form id="f">
+          <label class="full">Nombre<input id="name" placeholder="Simulacro 1" autocomplete="off"></label>
+          <label class="full">Fecha<input id="date" type="date" required></label>
+          <label>Neta<input id="neta" type="number" step="0.01" min="-70" max="200" inputmode="decimal" placeholder="—"></label>
+          <label>Perc. academia<input id="acad" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
+          <label>Perc. ReMIR<input id="remir" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
+          <details>
+            <summary>🧮 Calcular la neta desde aciertos y errores</summary>
+            <div class="calc">
+              <label>Aciertos<input id="ok" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
+              <label>Errores<input id="ko" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
+              <small id="calcout">Neta = aciertos − errores/3. Se rellena sola arriba.</small>
+            </div>
+          </details>
+          <div class="full formbtns"><button id="save">Guardar 💾</button><button type="button" class="ghost" id="cancel" hidden>Cancelar</button></div>
+        </form>
+        <p class="hint">Rellena lo que tengas: los percentiles suelen llegar al día siguiente, y luego puedes darle a ✏️ en el historial. Percentil alto = mejor.</p>
+      </div>
+
+      <div id="pane-study" hidden>
+        <div class="srow">
+          <label>Día<input id="sdate" type="date"></label>
+          <label>Horas<input id="shours" type="number" step="0.25" min="0" max="24" inputmode="decimal" placeholder="0"></label>
+        </div>
+        <div class="chips" style="margin:10px 0"><button type="button" class="ghost" data-h="1">1 h</button><button type="button" class="ghost" data-h="2">2 h</button><button type="button" class="ghost" data-h="4">4 h</button><button type="button" class="ghost" data-h="6">6 h</button><button type="button" id="sbtn" style="flex:1">Guardar 📚</button></div>
+        <div class="strip" id="strip"></div>
+        <p class="hint" id="studysum"></p>
+        <p class="hint">Últimos 28 días: más oscuro = más horas · 🩺 = hubo simulacro · toca un día para editarlo.</p>
+      </div>
+    </div>
+  </div>
 </main>
 <div id="toasts"></div>
 
@@ -387,9 +423,10 @@ function render(){
   $('goal').value=state.goals[k]??'';
   const v=verdict(s,k);$('verdict').hidden=!v;if(v){$('emoji').textContent=v[0];$('msg').textContent=v[1]}
   const n=s.map(x=>x[k]),avg=n.length?n.reduce((a,b)=>a+b,0)/n.length:0;
-  const st=[['Última',n.length?fmt(n[n.length-1]):'–'],['Mejor',n.length?fmt(Math.max(...n)):'–'],['Media',n.length?fmt(avg):'–'],
-    ['Vs. primera',n.length>1?(n[n.length-1]-n[0]>=0?'+':'')+fmt(n[n.length-1]-n[0]):'–']];
-  $('stats').innerHTML=st.map(([a,b])=>`<div class="stat"><b>${b}</b><small>${a}</small></div>`).join('');
+  const dl=n.length>1?n[n.length-1]-n[n.length-2]:null;
+  const em=dl===null?'':`<em class="${dl>0?'up':dl<0?'down':''}">${dl>0?'▲ +':dl<0?'▼ ':'= '}${fmt(dl)}</em>`;
+  const st=[['Última',n.length?fmt(n[n.length-1]):'–',em],['Mejor',n.length?fmt(Math.max(...n)):'–',''],['Media',n.length?fmt(avg):'–','']];
+  $('stats').innerHTML=st.map(([a,b,e])=>`<div class="stat"><b>${b}</b><small>${a}</small>${e}</div>`).join('');
 
   const all=sortedAll();
   $('list').innerHTML=all.length?[...all].reverse().map(x=>{
@@ -579,13 +616,22 @@ function gameState(){
   return{c,rows,xp,lvl:lvOf(xp)};
 }
 
-function toast(html,ms=3800){
-  const t=document.createElement('div');t.className='toast';t.innerHTML=html;$('toasts').appendChild(t);
+function toast(html,ms=3800,act){
+  const t=document.createElement('div');t.className='toast';t.innerHTML=html;
+  if(act){const b=document.createElement('button');b.textContent=act.label;b.onclick=()=>{act.fn();t.remove()};t.appendChild(b)}
+  $('toasts').appendChild(t);
   setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400)},ms);
 }
 const STUDY_MSG=['Cada hora cuenta. Tu yo del futuro (con bata) te lo agradece.','¡Otro día en el bote! El Harrison tiembla.','Café + apuntes + tú = combinación ganadora.','Constancia > motivación. Y tú tienes de las dos.','Una hora más y mereces una pizza 🍕'];
 
-let gameBusy=false;
+let selAch=null,lastRows=[];
+function showAch(rows){
+  if(rows)lastRows=rows;
+  const r=lastRows.find(x=>x.id===selAch),el=$('achinfo');
+  if(!r){el.textContent='Toca un logro para ver cómo conseguirlo 👆';return}
+  el.style.setProperty('--rc',RAR[r.r].c);
+  el.innerHTML=`<b>${r.e} ${r.n}</b>${r.d}<br><small>${r.done?'✅ Conseguido':r.max>1?`Progreso: ${fmt(Math.max(0,r.cur))}/${fmt(r.max)}`:'Aún no'}</small> · <em>${RAR[r.r].n} · +${RAR[r.r].xp} XP</em>`;
+}
 function game(){
   const g=gameState(),{c,rows}=g;
   const lv=g.lvl,[av,title]=titleOf(lv),from=lvStart(lv),to=lvStart(lv+1),next=titleOf(lv+1)[1];
@@ -606,6 +652,7 @@ function game(){
   ];
   if(near)Q.push([false,`${near.e} ${near.n}`,near.d,[near.cur,near.max]]);
   if(avg!==null)Q.push([nt[nt.length-1]>avg,'📊 Supera tu media',`Tu media es ${fmt(avg)} netas y tu mejor ${fmt(Math.max(...nt))}. A por ellas.`,null]);
+  $('questhead').innerHTML=`🎮 Misiones <small>${Q.filter(q=>q[0]).length}/${Q.length} hechas</small>`;
   $('quests').innerHTML=Q.map(([ok,t,d,p])=>`<div class="quest ${ok?'ok':''}"><span class="qc">${ok?'✅':'⬜'}</span><div><b>${t}</b><small>${d}</small>${p?`<div class="xpbar sm"><i style="width:${Math.min(100,p[0]/p[1]*100)}%"></i></div>`:''}</div></div>`).join('');
   // ---- estudio: tira de 28 días
   const sd=Object.fromEntries(studyList().map(x=>[x.id,x.h])),simd=new Set(sortedAll().map(x=>x.date));
@@ -615,15 +662,10 @@ function game(){
   $('strip').innerHTML=cells;
   $('studysum').textContent=`${fmt(c.hours)} h en total · ${c.studyDays} días de estudio · racha máxima ${c.bestStreak}`;
   // ---- logros
-  const un=rows.filter(r=>r.done),lo=rows.filter(r=>!r.done);
-  $('achhead').textContent=`🏅 Logros · ${un.length}/${rows.length}`;
-  const card=r=>`<div class="badge ${r.done?'':'off'}" style="--rc:${RAR[r.r].c}"><span>${r.e}</span><div><b>${r.n}</b><small>${r.d}</small>
-    ${!r.done&&r.max>1?`<div class="xpbar sm"><i style="width:${Math.min(100,Math.max(0,r.cur)/r.max*100)}%"></i></div><small>${fmt(Math.max(0,r.cur))}/${fmt(r.max)}</small>`:''}
-    <em>${RAR[r.r].n} · +${RAR[r.r].xp} XP</em></div></div>`;
-  $('badges').innerHTML=un.map(card).join('')||'<p class="hint">Todavía ninguno. El primero está a un simulacro de distancia 🐣</p>';
-  $('locked').innerHTML=lo.map(card).join('');
-  $('lockedbtn').textContent=($('locked').hidden?'Ver ':'Ocultar ')+lo.length+' por desbloquear';
-  $('lockedbtn').hidden=!lo.length;
+  const un=rows.filter(r=>r.done);
+  $('achhead').innerHTML=`🏅 Logros <small>${un.length}/${rows.length}</small>`;
+  $('badges').innerHTML=[...un,...rows.filter(r=>!r.done)].map(r=>`<button type="button" class="ach ${r.done?'':'off'} ${r.id===selAch?'sel':''}" style="--rc:${RAR[r.r].c}" data-id="${r.id}" aria-label="${r.n}">${r.e}</button>`).join('');
+  showAch(rows);
   // ---- novedades: avisos y confeti (solo la primera vez que se desbloquea)
   const seen=new Set(state.seen),fresh=un.filter(r=>!seen.has(r.id));
   const lvUp=state.lv&&lv>state.lv;
@@ -649,7 +691,7 @@ function saveStudy(){
   else if(o){o.h=h;o.del=false;o.u=Date.now()}
   else state.study.push({id:d,h,u:Date.now()});
   if(!isNaN(h)&&h>0)toast(`<b>📚 +${20+10*Math.min(h,12)} XP</b><br>${STUDY_MSG[Math.floor(Math.random()*STUDY_MSG.length)]}`);
-  save();render();
+  save();closeSheet();render();
 }
 
 function confetti(){
@@ -681,16 +723,28 @@ $('f').onsubmit=e=>{
     // salta a la pestaña del dato que acaba de meter si no hay dato en la actual
     if(data[state.tab]===null){state.tab=KEYS.find(k=>data[k]!==null)}
   }
-  save();resetForm();render();
+  save();resetForm();closeSheet();render();
   if(rec)confetti();
 };
-$('cancel').onclick=resetForm;
+$('cancel').onclick=()=>{resetForm();closeSheet()};
+function openSheet(t){
+  $('sheet').hidden=false;document.body.classList.add('noscroll');
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.s===t));
+  $('pane-sim').hidden=t!=='sim';$('pane-study').hidden=t!=='study';
+  if(t==='study'){$('sdate').value=$('sdate').value||today();studyFill()}
+}
+function closeSheet(){
+  if(editing)resetForm();
+  $('sheet').hidden=true;document.body.classList.remove('noscroll');
+}
+$('fab').onclick=()=>openSheet('sim');
+$('sheetx').onclick=$('sheetbg').onclick=closeSheet;
+document.querySelector('.seg').onclick=e=>{const b=e.target.closest('[data-s]');if(b)openSheet(b.dataset.s)};
+$('badges').onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;selAch=selAch===b.dataset.id?null:b.dataset.id;game()};
 $('sdate').onchange=studyFill;
 $('sbtn').onclick=saveStudy;
 document.querySelector('.chips').onclick=e=>{const b=e.target.closest('[data-h]');if(b)$('shours').value=b.dataset.h};
 $('strip').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;$('sdate').value=b.dataset.d;studyFill();$('shours').focus()};
-$('lockedbtn').onclick=()=>{$('locked').hidden=!$('locked').hidden;game_label()};
-const game_label=()=>{const n=ACH.length-document.querySelectorAll('#badges .badge').length;$('lockedbtn').textContent=($('locked').hidden?'Ver ':'Ocultar ')+n+' por desbloquear'};
 const calc=()=>{const a=parseFloat($('ok').value),e=parseFloat($('ko').value);
   if(isNaN(a))return;const n=Math.round((a-(isNaN(e)?0:e)/3)*100)/100;
   $('neta').value=n;$('calcout').textContent=`${a} − ${isNaN(e)?0:e}/3 = ${fmt(n)} netas ✅`};
@@ -701,13 +755,17 @@ $('exam').onchange=()=>{state.goals.exam=$('exam').value||null;state.gu=Date.now
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;state.tab=b.dataset.t;save();render()};
 $('list').onclick=e=>{
   const d=e.target.closest('[data-id]'),ed=e.target.closest('[data-ed]');
-  if(d&&confirm('¿Borrar este simulacro? (¿tan mal fue? 👀)')){state.sims.filter(x=>x.id==d.dataset.id).forEach(x=>{x.del=true;x.u=Date.now()});if(editing==d.dataset.id)resetForm();save();render()}
+  if(d){
+    const id=d.dataset.id,x=state.sims.find(y=>y.id==id);if(!x)return;
+    x.del=true;x.u=Date.now();if(editing==id)resetForm();save();render();
+    toast(`🗑️ Simulacro borrado`,6000,{label:'Deshacer',fn:()=>{x.del=false;x.u=Date.now();save();render()}});
+  }
   if(ed){
     const x=state.sims.find(y=>y.id==ed.dataset.ed&&!y.del);if(!x)return;
     editing=x.id;$('name').value=x.name;$('date').value=x.date;
     KEYS.forEach(k=>$(k).value=has(x,k)?x[k]:'');
     $('ftitle').textContent='✏️ Editando simulacro';$('save').textContent='Actualizar ✅';$('cancel').hidden=false;
-    $('f').scrollIntoView({behavior:'smooth',block:'center'});
+    openSheet('sim');
   }
 };
 $('goal').onchange=()=>{const v=parseFloat($('goal').value);state.goals[state.tab]=isNaN(v)?null:v;state.gu=Date.now();save();render()};
