@@ -144,6 +144,7 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
     <ul id="list"></ul>
   </section>
 
+  <p class="hint" id="sync" style="text-align:center"></p>
   <footer>
     <button class="ghost" id="exp">⬇️ Copia de seguridad</button>
     <button class="ghost" id="imp">⬆️ Restaurar</button>
@@ -154,8 +155,7 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
 
 <script>
 const $=id=>document.getElementById(id);
-const KEY='babimir.v1',AUTH='babimir.auth';
-const PW_HASH='b2471d941bf888366cf43813752ea2ebfef08254773cf116187cdd6d0463a50a';
+const KEY='babimir.v1',AUTH='babimir.pw';
 
 const M={
   neta :{label:'Netas',      short:'Neta',        icon:'🎯',color:'#ff4f9a',unit:'netas',      min:-70,max:200,def:130},
@@ -165,39 +165,97 @@ const M={
 const KEYS=Object.keys(M);
 
 /* ---------- estado ---------- */
-let state={sims:[],goals:{neta:130,acad:90,remir:90},tab:'neta'};
+let state={sims:[],goals:{neta:130,acad:90,remir:90},gu:0,tab:'neta'};
 try{
   const s=JSON.parse(localStorage.getItem(KEY));
   if(s&&Array.isArray(s.sims)){
     state.sims=s.sims;
     state.goals={...state.goals,...(s.goals||{}),...(s.goal!=null&&!s.goals?{neta:s.goal}:{})};
+    state.gu=s.gu||0;
     if(M[s.tab])state.tab=s.tab;
   }
 }catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const save=()=>{persist();sync()};
 let editing=null;
 
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const fmt=n=>(Math.round(n*100)/100).toLocaleString('es-ES');
 const fdate=d=>new Date(d+'T12:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const sortedAll=()=>[...state.sims].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
+const sortedAll=()=>state.sims.filter(x=>!x.del).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
 const has=(x,k)=>typeof x[k]==='number'&&!isNaN(x[k]);
 const series=k=>sortedAll().filter(x=>has(x,k));
 
-/* ---------- contraseña ---------- */
-async function sha(t){
-  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-}
+/* ---------- contraseña + sincronización ---------- */
+let PW='';
+const api=async(method,body)=>{
+  const r=await fetch('/api/data',{method,headers:{'x-pw':PW,'content-type':'application/json'},body:body&&JSON.stringify(body)});
+  if(r.status===401){const e=new Error('401');e.code=401;throw e}
+  if(r.status===409)return{conflict:true};
+  if(!r.ok)throw new Error('http '+r.status);
+  return r.json();
+};
 function unlock(){$('lock').hidden=true;$('app').hidden=false;init()}
+async function login(pw){
+  PW=pw.trim().toLowerCase();
+  const r=await api('GET');          // lanza 401 si la contraseña no vale
+  try{localStorage.setItem(AUTH,PW)}catch(_){}
+  unlock();
+  await sync(r);
+}
 $('lf').onsubmit=async e=>{
   e.preventDefault();
-  const h=await sha($('pw').value.trim().toLowerCase());
-  if(h===PW_HASH){try{localStorage.setItem(AUTH,h)}catch(_){}$('pw').value='';$('err').textContent='';unlock()}
-  else{$('err').textContent='Contraseña incorrecta 🧐';const c=$('lockcard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}
+  $('err').textContent='';
+  try{await login($('pw').value);$('pw').value=''}
+  catch(x){
+    $('err').textContent=x.code===401?'Contraseña incorrecta 🧐':'No hay conexión con el servidor 📡';
+    const c=$('lockcard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+  }
 };
 $('lockbtn').onclick=()=>{try{localStorage.removeItem(AUTH)}catch(_){}location.reload()};
+
+/* mezcla por id: gana el más reciente (u). Los borrados son marcas (del) para que se propaguen */
+function mergeSims(a,b){
+  const m=new Map();
+  for(const x of [...a,...b]){const o=m.get(x.id);if(!o||(x.u||0)>(o.u||0))m.set(x.id,x)}
+  return [...m.values()].sort((x,y)=>x.id-y.id);
+}
+const docOf=()=>({sims:state.sims,goals:state.goals,gu:state.gu});
+const sig=d=>JSON.stringify([d.sims,d.goals,d.gu]);
+let etag=null,syncing=false,again=false,dirty=false;
+function status(t,bad){const el=$('sync');if(el){el.textContent=t;el.style.color=bad?'var(--red)':'var(--muted)'}}
+
+async function sync(first){
+  if(!PW)return;
+  if(syncing){again=true;return}
+  syncing=true;status('☁️ sincronizando…');
+  try{
+    for(let i=0;i<5;i++){
+      const r=first||await api('GET');first=null;
+      etag=r.etag;
+      const rd=r.doc||{sims:[],goals:state.goals,gu:0};
+      const sims=mergeSims(state.sims,rd.sims||[]);
+      const useRemoteGoals=(rd.gu||0)>(state.gu||0);
+      const merged={sims,goals:useRemoteGoals?{...state.goals,...rd.goals}:state.goals,gu:Math.max(state.gu||0,rd.gu||0)};
+      const changedLocal=sig(merged)!==sig(docOf());
+      state.sims=merged.sims;state.goals=merged.goals;state.gu=merged.gu;persist();
+      if(changedLocal)render();
+      if(r.doc&&sig(merged)===sig({sims:rd.sims||[],goals:rd.goals,gu:rd.gu||0})){dirty=false;break}   // remoto ya está al día
+      const w=await api('PUT',{doc:docOf(),etag});
+      if(w.conflict)continue;       // alguien escribió entre medias: vuelve a mezclar
+      etag=w.etag;dirty=false;break;
+    }
+    status('☁️ guardado en la nube ✓');
+  }catch(e){
+    if(e.code===401){try{localStorage.removeItem(AUTH)}catch(_){}location.reload();return}
+    dirty=true;status('⚠️ sin conexión: tus datos están en este móvil y se subirán luego',true);
+  }
+  syncing=false;
+  if(again){again=false;sync()}
+}
+addEventListener('online',()=>sync());
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
 
 /* ---------- textos ---------- */
 const tags=['Neta a neta, Babi se hace médica 💪','Plaza en mente, café en vena ☕','Cada simulacro es un Pokémon: hay que cazarlos todos','Las netas suben, las ojeras también 🧟‍♀️','Hoy no, 4 de Medicina Interna. Hoy sí: simulacro.','Futura Dra. Babi, ve reservando la bata 🥼','Mientras tanto, las del ReMIR respirando en tu nuca 👀'];
@@ -300,13 +358,13 @@ $('f').onsubmit=e=>{
   e.preventDefault();
   const data={neta:num('neta'),acad:num('acad'),remir:num('remir')};
   if(KEYS.every(k=>data[k]===null)){alert('Mete al menos un dato (neta o algún percentil) 🙏');return}
-  const prevBest={};KEYS.forEach(k=>{const v=state.sims.filter(x=>x.id!==editing&&has(x,k)).map(x=>x[k]);prevBest[k]=v.length?Math.max(...v):null});
+  const prevBest={};KEYS.forEach(k=>{const v=state.sims.filter(x=>!x.del&&x.id!==editing&&has(x,k)).map(x=>x[k]);prevBest[k]=v.length?Math.max(...v):null});
   const rec=KEYS.reduce((a,k)=>a||(data[k]!==null&&prevBest[k]!==null&&data[k]>prevBest[k]),false);
   if(editing){
-    const x=state.sims.find(y=>y.id===editing);
-    if(x){x.name=$('name').value.trim()||x.name;x.date=$('date').value||x.date;KEYS.forEach(k=>x[k]=data[k])}
+    const x=state.sims.find(y=>y.id===editing&&!y.del);
+    if(x){x.u=Date.now();x.name=$('name').value.trim()||x.name;x.date=$('date').value||x.date;KEYS.forEach(k=>x[k]=data[k])}
   }else{
-    state.sims.push({id:Date.now(),name:$('name').value.trim()||'Simulacro '+(state.sims.length+1),date:$('date').value||today(),...data});
+    state.sims.push({id:Date.now(),u:Date.now(),name:$('name').value.trim()||'Simulacro '+(sortedAll().length+1),date:$('date').value||today(),...data});
     // salta a la pestaña del dato que acaba de meter si no hay dato en la actual
     if(data[state.tab]===null){state.tab=KEYS.find(k=>data[k]!==null)}
   }
@@ -318,22 +376,22 @@ $('cancel').onclick=resetForm;
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;state.tab=b.dataset.t;save();render()};
 $('list').onclick=e=>{
   const d=e.target.closest('[data-id]'),ed=e.target.closest('[data-ed]');
-  if(d&&confirm('¿Borrar este simulacro? (¿tan mal fue? 👀)')){state.sims=state.sims.filter(x=>x.id!=d.dataset.id);if(editing==d.dataset.id)resetForm();save();render()}
+  if(d&&confirm('¿Borrar este simulacro? (¿tan mal fue? 👀)')){state.sims.filter(x=>x.id==d.dataset.id).forEach(x=>{x.del=true;x.u=Date.now()});if(editing==d.dataset.id)resetForm();save();render()}
   if(ed){
-    const x=state.sims.find(y=>y.id==ed.dataset.ed);if(!x)return;
+    const x=state.sims.find(y=>y.id==ed.dataset.ed&&!y.del);if(!x)return;
     editing=x.id;$('name').value=x.name;$('date').value=x.date;
     KEYS.forEach(k=>$(k).value=has(x,k)?x[k]:'');
     $('ftitle').textContent='✏️ Editando simulacro';$('save').textContent='Actualizar ✅';$('cancel').hidden=false;
     $('f').scrollIntoView({behavior:'smooth',block:'center'});
   }
 };
-$('goal').onchange=()=>{const v=parseFloat($('goal').value);state.goals[state.tab]=isNaN(v)?null:v;save();render()};
-$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download='babimir-backup.json';a.click()};
+$('goal').onchange=()=>{const v=parseFloat($('goal').value);state.goals[state.tab]=isNaN(v)?null:v;state.gu=Date.now();save();render()};
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({sims:state.sims.filter(x=>!x.del),goals:state.goals},null,2)],{type:'application/json'}));a.download='babimir-backup.json';a.click()};
 $('imp').onclick=()=>$('file').click();
 $('file').onchange=async e=>{
   try{const s=JSON.parse(await e.target.files[0].text());
     if(!Array.isArray(s.sims))throw 0;
-    state={sims:s.sims,goals:{...state.goals,...(s.goals||(s.goal!=null?{neta:s.goal}:{}))},tab:M[s.tab]?s.tab:'neta'};
+    state={sims:mergeSims(state.sims,s.sims),goals:{...state.goals,...(s.goals||(s.goal!=null?{neta:s.goal}:{}))},gu:Date.now(),tab:M[s.tab]?s.tab:'neta'};
     save();render()}
   catch(_){alert('Ese archivo no parece mío 🤨')}
   e.target.value=''};
@@ -347,8 +405,11 @@ function init(){
   let rw=innerWidth;addEventListener('resize',()=>{if(innerWidth!==rw){rw=innerWidth;render()}});
 }
 /* arranque */
-let authed=false;try{authed=localStorage.getItem(AUTH)===PW_HASH}catch(_){}
-if(authed)unlock();
+let saved='';try{saved=localStorage.getItem(AUTH)||''}catch(_){}
+if(saved){login(saved).catch(e=>{
+  if(e.code===401){try{localStorage.removeItem(AUTH)}catch(_){}return}
+  // sin red: entra con lo que haya en el móvil y reintenta después
+  PW=saved;unlock();dirty=true;status('⚠️ sin conexión: tus datos están en este móvil y se subirán luego',true)})}
 </script>
 </body>
 </html>
