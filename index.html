@@ -237,6 +237,7 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
     <button class="ghost" id="exp">⬇️ Copia de seguridad</button>
     <button class="ghost" id="imp">⬆️ Restaurar</button>
     <button class="ghost" id="lockbtn">🔒 Bloquear</button>
+    <button class="ghost" id="wipebtn">🧹 Borrar datos de este dispositivo</button>
     <input type="file" id="file" accept="application/json" hidden>
   </footer>
 </main>
@@ -301,6 +302,11 @@ $('lf').onsubmit=async e=>{
     $('err').textContent=x.code===401?'Contraseña incorrecta 🧐':'No hay conexión con el servidor 📡';
     const c=$('lockcard');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
   }
+};
+$('wipebtn').onclick=()=>{
+  if(!confirm('¿Borrar los datos guardados en ESTE dispositivo?\n\nLos de la nube no se tocan: al recargar se volverán a descargar.'))return;
+  try{localStorage.removeItem(KEY)}catch(_){}
+  location.reload();
 };
 $('lockbtn').onclick=()=>{try{localStorage.removeItem(AUTH)}catch(_){}location.reload()};
 
