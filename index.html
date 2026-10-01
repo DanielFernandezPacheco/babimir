@@ -108,9 +108,25 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
 .calc small{grid-column:1/-1;color:var(--muted)}
 .showpw{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;margin:-4px 0 12px;font-size:.85rem}
 .showpw input{width:20px;min-height:20px;padding:0}
+/* mascota */
+.hero{display:flex;align-items:flex-end;gap:4px;margin:4px 0 12px}
+.bubble{flex:1;position:relative;background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:12px 14px;font-weight:800;font-size:.95rem;line-height:1.3;margin-bottom:34px;box-shadow:0 4px 0 var(--ink);min-height:62px;display:flex;align-items:center}
+.bubble::after{content:'';position:absolute;right:-17px;bottom:16px;border:9px solid transparent;border-left:9px solid var(--ink);border-right:0}
+.bubble::before{content:'';position:absolute;right:-11px;bottom:17px;border:8px solid transparent;border-left:8px solid var(--card);border-right:0;z-index:1}
+.mascot{flex:none;width:122px;height:160px;overflow:hidden;cursor:pointer;border:0;padding:0;background:none;box-shadow:none;min-height:0;border-radius:0}
+.mascot:active{transform:none}
+.mascot img{width:122px;height:auto;display:block;transform-origin:50% 100%;animation:sway 3.5s ease-in-out infinite;pointer-events:none}
+.mascot.wig img{animation:wig .6s}
+@keyframes sway{50%{transform:rotate(1.6deg) translateY(-2px)}}
+@keyframes wig{20%{transform:rotate(-7deg) scale(1.05)}50%{transform:rotate(6deg) scale(1.05)}80%{transform:rotate(-3deg)}}
+.lockface{width:104px;height:104px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);object-fit:cover;display:block;margin:0 auto 8px}
+.lockwrap{position:relative;width:104px;margin:0 auto}.lockwrap b{position:absolute;right:-4px;bottom:6px;font-size:1.6rem}
+.emptyface{width:72px;height:72px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);object-fit:cover;display:block;margin:0 auto 8px}
 /* juego */
 .player{display:flex;gap:14px;align-items:center;border:3px solid var(--ink);box-shadow:var(--shadow);margin-bottom:16px}
-.av{font-size:2.6rem;width:64px;height:64px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+.av{position:relative;width:68px;height:68px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);flex:none}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.av b{position:absolute;right:-8px;bottom:-6px;font-size:1.3rem;background:var(--card);border:2px solid var(--ink);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center}
 .pi{flex:1;min-width:0}.pi b{display:block;font-size:1.02rem;line-height:1.2}.pi small{color:var(--muted);font-weight:700;font-size:.76rem}
 .xpbar{height:14px;background:var(--line);border:2px solid var(--ink);border-radius:99px;overflow:hidden;margin:6px 0 4px}
 .xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:99px;transition:width .6s}
@@ -167,7 +183,7 @@ body.noscroll{overflow:hidden}
 
 <div id="lock">
   <div class="card" id="lockcard">
-    <div class="big">🔒</div>
+    <div class="lockwrap"><img class="lockface" src="/img/babi-face.webp" alt="Babi"><b>🔒</b></div>
     <h2>Zona solo para doctoras</h2>
     <p>Si no eres Babi, media vuelta. El estetoscopio es para mirar, no para tocar.</p>
     <form id="lf" style="display:block">
@@ -181,7 +197,10 @@ body.noscroll{overflow:hidden}
 
 <main id="app" hidden>
   <h1>Babi <span>vs.</span> el MIR 🩺</h1>
-  <p class="tag" id="tag"></p>
+  <div class="hero">
+    <div class="bubble"><span id="say"></span></div>
+    <button class="mascot" id="mascot" aria-label="Babi"><img src="/img/babi.webp" alt="Babi vestida de médica"></button>
+  </div>
   <div class="pill" id="count" hidden></div>
 
   <section class="card player" id="player"></section>
@@ -435,7 +454,7 @@ function render(){
     const sub=KEYS.map(t=>`${M[t].icon}\u00a0${has(x,t)?fmt(x[t]):'–'}`).join(' ');
     return`<li><div class="n">${esc(x.name)}<small>${fdate(x.date)} · ${sub}</small></div><div class="r"><span class="v">${has_k?fmt(x[k]):'–'}</span>${badge}</div>
       <button class="x" data-ed="${x.id}" title="Editar">✏️</button><button class="x" data-id="${x.id}" title="Borrar">🗑️</button></li>`}).join('')
-    :'<li class="empty">Aún no hay simulacros. Los 200 de la tarde no se hacen solos 📚</li>';
+    :'<li class="empty"><img class="emptyface" src="/img/babi-face.webp" alt="">Aún no hay simulacros. Los 200 de la tarde no se hacen solos 📚</li>';
   chart(s,k);
   trend(s,k);
   countdown();
@@ -624,6 +643,37 @@ function toast(html,ms=3800,act){
 }
 const STUDY_MSG=['Cada hora cuenta. Tu yo del futuro (con bata) te lo agradece.','¡Otro día en el bote! El Harrison tiembla.','Café + apuntes + tú = combinación ganadora.','Constancia > motivación. Y tú tienes de las dos.','Una hora más y mereces una pizza 🍕'];
 
+const SAY={
+  empty:['¡Hola, Babi! Pulsa el ＋ y metemos tu primer simulacro 💪','Soy tu bata de la suerte. Dale al ＋ y empezamos 🩺'],
+  record:['¡RÉCORD! Hasta mi estetoscopio ha aplaudido 👏','Nueva marca personal… ¿seguro que no eres ya R5? 😎'],
+  up:['Sube que sube. Así se hace, Dra. Quesada 📈','Esa curva me gusta más que un MIR aprobado.'],
+  down:['Un mal simulacro lo tiene cualquiera. La bata no se mancha por eso 🥼','Respira. Los simulacros mienten y yo lo sé.'],
+  streak:n=>[`${n} días seguidos… ¡qué disciplina! 🔥`,`Racha de ${n}. El Harrison te tiene miedo.`],
+  nostudy:['Hoy no has estudiado todavía… yo no digo nada 👀','El ＋ está ahí para registrar tu estudio de hoy 📚'],
+  soon:d=>[`¡Quedan ${d} días! Respira y a por ellos 💪`,`${d} días para el MIR. Tú, la bata y mucho café ☕`],
+  any:tags.concat(['Hoy estudias, mañana recetas.','Esto no es una carrera, es un maratón con café ☕','Si el Harrison pesa es porque lleva mucho conocimiento 📖','Cada simulacro te acerca a la bata de verdad.','Tranqui: yo te cuido el estetoscopio mientras estudias.'])
+};
+let mKey='',mTap=0;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function mascot(c,force){
+  const nt=series('neta').map(x=>x.neta),d=nt.length>1?nt[nt.length-1]-nt[nt.length-2]:0;
+  const rec=nt.length>1&&nt[nt.length-1]>Math.max(...nt.slice(0,-1));
+  const key=[c.sims,c.streak,c.todayDone,Math.sign(d),rec].join();
+  if(!force&&key===mKey)return;mKey=key;
+  const pools=[];
+  if(!c.sims)pools.push(SAY.empty);else if(rec)pools.push(SAY.record);else if(d>0)pools.push(SAY.up);else if(d<0)pools.push(SAY.down);
+  if(c.streak>=3)pools.push(SAY.streak(c.streak));
+  if(c.sims&&!c.todayDone)pools.push(SAY.nostudy);
+  const ex=state.goals.exam,days=ex?Math.round((dayNum(ex)-dayNum(today()))):null;
+  if(days!==null&&days>0&&days<=45)pools.push(SAY.soon(days));
+  $('say').textContent=pick(pools.length&&Math.random()<.75?pick(pools):SAY.any);
+}
+$('mascot').onclick=()=>{
+  const m=$('mascot');m.classList.remove('wig');void m.offsetWidth;m.classList.add('wig');
+  mTap++;
+  if(mTap%7===0){confetti();$('say').textContent='¡Dra. Quesada firmando autógrafos! ✍️🎉';return}
+  mascot(gameCtx(),true);
+};
 let selAch=null,lastRows=[];
 function showAch(rows){
   if(rows)lastRows=rows;
@@ -636,11 +686,12 @@ function game(){
   const g=gameState(),{c,rows}=g;
   const lv=g.lvl,[av,title]=titleOf(lv),from=lvStart(lv),to=lvStart(lv+1),next=titleOf(lv+1)[1];
   // ---- jugadora
-  $('player').innerHTML=`<div class="av">${av}</div>
+  $('player').innerHTML=`<div class="av"><img src="/img/babi-face.webp" alt=""><b>${av}</b></div>
     <div class="pi"><b>Nivel ${lv} · ${title}</b>
       <div class="xpbar"><i style="width:${Math.min(100,(g.xp-from)/(to-from)*100)}%"></i></div>
       <small>${g.xp} XP · faltan ${to-g.xp} para ser «${next}»</small></div>
     <div class="fire ${c.todayDone?'on':''}"><span>${c.streak?'🔥':'🕯️'}</span><b>${c.streak}</b><small>${c.streak===1?'día':'días'}</small></div>`;
+  mascot(c);
   // ---- misiones
   const done=rows.filter(r=>r.done).length;
   const near=rows.filter(r=>!r.done&&r.max>1&&r.cur>0).sort((a,b)=>b.cur/b.max-a.cur/a.max)[0];
@@ -782,7 +833,6 @@ $('file').onchange=async e=>{
 let inited=false;
 function init(){
   if(inited)return;inited=true;
-  $('tag').textContent=tags[Math.floor(Math.random()*tags.length)];
   $('date').value=today();$('sdate').value=today();
   render();studyFill();
   let rw=innerWidth;addEventListener('resize',()=>{if(innerWidth!==rw){rw=innerWidth;render()}});
