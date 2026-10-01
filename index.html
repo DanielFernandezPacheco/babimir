@@ -113,7 +113,7 @@ const fmt=n=>(Math.round(n*100)/100).toLocaleString('es-ES');
 const fdate=d=>new Date(d+'T12:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
 const sorted=()=>[...state.sims].sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);
 
-const tags=['Neta a neta, Babi se hace médica 💪','Plaza en mente, café en vena ☕','Cada simulacro es un Pokémon: hay que cazarlos todos','Las netas suben, la ojeras también 🧟‍♀️','Hoy no, 4 de Medicina Interna. Hoy sí: simulacro.','Futura Dra. Babi, ve reservando el bata 🥼'];
+const tags=['Neta a neta, Babi se hace médica 💪','Plaza en mente, café en vena ☕','Cada simulacro es un Pokémon: hay que cazarlos todos','Las netas suben, la ojeras también 🧟‍♀️','Hoy no, 4 de Medicina Interna. Hoy sí: simulacro.','Futura Dra. Babi, ve reservando la bata 🥼'];
 $('tag').textContent=tags[Math.floor(Math.random()*tags.length)];
 $('date').value=today();
 
