@@ -111,6 +111,36 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
 .badge.off{background:transparent;color:var(--muted);border-style:dashed;border-color:var(--line);filter:grayscale(1);opacity:.7}
 .showpw{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;margin:-4px 0 12px;font-size:.85rem}
 .showpw input{width:20px;min-height:20px;padding:0}
+/* juego */
+.player{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--card),var(--card));margin-bottom:18px}
+.av{font-size:2.6rem;width:64px;height:64px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+.pi{flex:1;min-width:0}.pi b{display:block;font-size:1.02rem;line-height:1.2}.pi small{color:var(--muted);font-weight:700;font-size:.76rem}
+.xpbar{height:14px;background:var(--line);border:2px solid var(--ink);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:99px;transition:width .6s}
+.xpbar.sm{height:9px;border-width:1.5px;margin:5px 0 2px}
+.fire{text-align:center;flex:none;line-height:1.1;filter:grayscale(.9);opacity:.75}.fire.on{filter:none;opacity:1}
+.fire span{font-size:1.9rem;display:block}.fire b{font-size:1.2rem}.fire small{display:block;font-size:.7rem;color:var(--muted);font-weight:800}
+.fire.on span{animation:bob 1.6s ease-in-out infinite}
+.quest{display:flex;gap:10px;padding:9px 0;border-bottom:2px dashed var(--line)}.quest:last-child{border:0}
+.quest b{display:block;font-size:.95rem}.quest small{display:block;color:var(--muted);font-weight:600;font-size:.8rem}.quest>div{flex:1;min-width:0}
+.quest.ok b{text-decoration:line-through;opacity:.6}.qc{font-size:1.2rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chips .ghost{padding:6px 12px;min-height:38px}
+.strip{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin:14px 0 8px}
+.cell{aspect-ratio:1;min-height:0;padding:0;border:2px solid var(--line);border-radius:6px;background:transparent;box-shadow:none;position:relative}
+.cell:active{transform:none}
+.cell.l1{background:#ffd9ea;border-color:#ffd9ea}.cell.l2{background:#ff9ac8;border-color:#ff9ac8}.cell.l3{background:#ff4f9a;border-color:#ff4f9a}.cell.l4{background:#7c4dff;border-color:#7c4dff}
+.cell.sim::after{content:'🩺';position:absolute;inset:0;font-size:9px;display:flex;align-items:center;justify-content:center}
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
+.badges{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.badge{background:var(--card);color:var(--ink);border-color:var(--rc,var(--ink));border-left-width:6px;align-items:flex-start;box-shadow:0 3px 0 var(--rc,var(--ink))}
+.badge>div{flex:1;min-width:0}.badge b{display:block;font-size:.88rem}.badge small{display:block;color:var(--muted);font-weight:600;font-size:.76rem}
+.badge em{display:block;font-style:normal;color:var(--rc);font-size:.7rem;font-weight:900;margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
+.badge.off{box-shadow:none;border-style:dashed;border-color:var(--line);border-left-color:var(--line);filter:grayscale(1);opacity:.75}
+#locked{margin-top:10px}
+#toasts{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;z-index:98;pointer-events:none;padding:0 14px}
+.toast{background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-size:.92rem;line-height:1.3;box-shadow:0 6px 18px rgba(0,0,0,.35);animation:pop .35s;max-width:420px;text-align:center}
+.toast.out{opacity:0;transform:translateY(10px);transition:.35s}
+@keyframes pop{from{transform:translateY(20px) scale(.9);opacity:0}}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -134,6 +164,13 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
   <h1>Babi <span>vs.</span> el MIR 🩺</h1>
   <p class="tag" id="tag"></p>
   <div class="pill" id="count" hidden></div>
+
+  <section class="card player" id="player"></section>
+
+  <section class="card">
+    <h2>🎮 Misiones</h2>
+    <div id="quests"></div>
+  </section>
 
   <div class="tabs" id="tabs"></div>
 
@@ -172,8 +209,22 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
   </section>
 
   <section class="card">
-    <h2>🏅 Logros</h2>
+    <h2>📚 Registro de estudio</h2>
+    <div class="srow">
+      <label>Día<input id="sdate" type="date"></label>
+      <label>Horas<input id="shours" type="number" step="0.25" min="0" max="24" inputmode="decimal" placeholder="0"></label>
+    </div>
+    <div class="chips" style="margin:10px 0"><button type="button" class="ghost" data-h="1">1 h</button><button type="button" class="ghost" data-h="2">2 h</button><button type="button" class="ghost" data-h="4">4 h</button><button type="button" class="ghost" data-h="6">6 h</button><button type="button" id="sbtn" style="flex:1">Guardar estudio 📚</button></div>
+    <div class="strip" id="strip"></div>
+    <p class="hint" id="studysum"></p>
+    <p class="hint">Últimos 28 días: más oscuro = más horas · 🩺 = hubo simulacro · toca un día para editarlo.</p>
+  </section>
+
+  <section class="card">
+    <h2 id="achhead">🏅 Logros</h2>
     <div class="badges" id="badges"></div>
+    <div class="badges" id="locked" hidden></div>
+    <p style="text-align:center;margin:12px 0 0"><button type="button" class="ghost" id="lockedbtn"></button></p>
   </section>
 
   <section class="card">
@@ -189,6 +240,7 @@ summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-h
     <input type="file" id="file" accept="application/json" hidden>
   </footer>
 </main>
+<div id="toasts"></div>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -202,13 +254,13 @@ const M={
 const KEYS=Object.keys(M);
 
 /* ---------- estado ---------- */
-let state={sims:[],goals:{neta:130,acad:90,remir:90},gu:0,tab:'neta'};
+let state={epoch:0,sims:[],study:[],seen:[],lv:0,goals:{neta:130,acad:90,remir:90},gu:0,tab:'neta'};
 try{
   const s=JSON.parse(localStorage.getItem(KEY));
   if(s&&Array.isArray(s.sims)){
     state.sims=s.sims;
     state.goals={...state.goals,...(s.goals||{}),...(s.goal!=null&&!s.goals?{neta:s.goal}:{})};
-    state.gu=s.gu||0;
+    state.gu=s.gu||0;state.study=s.study||[];state.seen=s.seen||[];state.lv=s.lv||0;state.epoch=s.epoch||0;
     if(M[s.tab])state.tab=s.tab;
   }
 }catch(e){}
@@ -256,10 +308,10 @@ $('lockbtn').onclick=()=>{try{localStorage.removeItem(AUTH)}catch(_){}location.r
 function mergeSims(a,b){
   const m=new Map();
   for(const x of [...a,...b]){const o=m.get(x.id);if(!o||(x.u||0)>(o.u||0))m.set(x.id,x)}
-  return [...m.values()].sort((x,y)=>x.id-y.id);
+  return [...m.values()].sort((x,y)=>x.id<y.id?-1:x.id>y.id?1:0);
 }
-const docOf=()=>({sims:state.sims,goals:state.goals,gu:state.gu});
-const sig=d=>JSON.stringify([d.sims,d.goals,d.gu]);
+const docOf=()=>({epoch:state.epoch,sims:state.sims,goals:state.goals,gu:state.gu,study:state.study,seen:state.seen,lv:state.lv});
+const sig=d=>JSON.stringify([d.epoch||0,d.sims,d.goals,d.gu,d.study||[],[...(d.seen||[])].sort(),d.lv||0]);
 let etag=null,syncing=false,again=false,dirty=false;
 function status(t,bad){const el=$('sync');if(el){el.textContent=t;el.style.color=bad?'var(--red)':'var(--muted)'}}
 
@@ -268,22 +320,29 @@ async function sync(first){
   if(syncing){again=true;return}
   syncing=true;status('☁️ sincronizando…');
   try{
-    for(let i=0;i<5;i++){
+    let ok=false;
+    for(let i=0;i<6;i++){
       const r=first||await api('GET');first=null;
       etag=r.etag;
       const rd=r.doc||{sims:[],goals:state.goals,gu:0};
+      // "época" más nueva en la nube = reinicio total: se descarta lo que hubiera en este dispositivo
+      if((rd.epoch||0)>(state.epoch||0)){
+        Object.assign(state,{epoch:rd.epoch,sims:[],study:[],seen:[],lv:0,goals:{neta:130,acad:90,remir:90},gu:0});persist();render();
+      }
       const sims=mergeSims(state.sims,rd.sims||[]);
       const useRemoteGoals=(rd.gu||0)>(state.gu||0);
-      const merged={sims,goals:useRemoteGoals?{...state.goals,...rd.goals}:state.goals,gu:Math.max(state.gu||0,rd.gu||0)};
+      const merged={epoch:Math.max(state.epoch||0,rd.epoch||0),sims,goals:useRemoteGoals?{...state.goals,...rd.goals}:state.goals,gu:Math.max(state.gu||0,rd.gu||0),
+        study:mergeSims(state.study,rd.study||[]),seen:[...new Set([...state.seen,...(rd.seen||[])])].sort(),lv:Math.max(state.lv||0,rd.lv||0)};
       const changedLocal=sig(merged)!==sig(docOf());
-      state.sims=merged.sims;state.goals=merged.goals;state.gu=merged.gu;persist();
+      Object.assign(state,merged);persist();
       if(changedLocal)render();
-      if(r.doc&&sig(merged)===sig({sims:rd.sims||[],goals:rd.goals,gu:rd.gu||0})){dirty=false;break}   // remoto ya está al día
+      if(r.doc&&sig(merged)===sig({epoch:rd.epoch,sims:rd.sims||[],goals:rd.goals,gu:rd.gu||0,study:rd.study,seen:rd.seen,lv:rd.lv})){ok=true;break}   // remoto ya está al día
       const w=await api('PUT',{doc:docOf(),etag});
       if(w.conflict)continue;       // alguien escribió entre medias: vuelve a mezclar
-      etag=w.etag;dirty=false;break;
+      etag=w.etag;ok=true;break;
     }
-    status('☁️ guardado en la nube ✓');
+    if(!ok)throw new Error('conflicto persistente');
+    dirty=false;status('☁️ guardado en la nube ✓');
   }catch(e){
     if(e.code===401){try{localStorage.removeItem(AUTH)}catch(_){}location.reload();return}
     dirty=true;status('⚠️ sin conexión: tus datos están en este móvil y se subirán luego',true);
@@ -337,7 +396,7 @@ function render(){
   chart(s,k);
   trend(s,k);
   countdown();
-  badges();
+  game();
   $('exam').value=state.goals.exam||'';
 }
 
@@ -409,23 +468,182 @@ function countdown(){
   el.hidden=false;
   el.textContent=days>1?`⏳ Faltan ${days} días para el MIR`:days===1?'⏳ ¡MAÑANA es el MIR! Descansa y duerme 😴':days===0?'🍀 ¡HOY ES EL MIR! Tú puedes, Dra. Babi':'🎉 ¡El MIR ya pasó! Eres una crack';
 }
-function badges(){
-  const all=sortedAll(),nt=series('neta'),vals=k=>series(k).map(x=>x[k]);
-  const mx=k=>{const v=vals(k);return v.length?Math.max(...v):-Infinity};
-  let streak=0,best=0;for(let i=1;i<nt.length;i++){streak=nt[i].neta>nt[i-1].neta?streak+1:0;best=Math.max(best,streak)}
-  const jump=nt.some((x,i)=>i&&x.neta-nt[i-1].neta>=15);
-  const goal=state.goals.neta;
-  const B=[
-    ['🐣','Primer simulacro',all.length>=1],
-    ['🔟','10 simulacros',all.length>=10],
-    ['💯','Neta de 100+',mx('neta')>=100],
-    ['🎯','Objetivo de netas',!!goal&&mx('neta')>=goal],
-    ['🔥','3 subidas seguidas',best>=3],
-    ['🎢','Remontada (+15)',jump],
-    ['🏫','Academia: top 10%',mx('acad')>=90],
-    ['👑','Reina del ReMIR (90+)',mx('remir')>=90],
+/* ---------- gamificación ---------- */
+const RAR={common:{n:'Común',xp:20,c:'#19b37a'},rare:{n:'Rara',xp:50,c:'#2f80ed'},epic:{n:'Épica',xp:100,c:'#7c4dff'},legend:{n:'Legendaria',xp:200,c:'#ff8a00'}};
+const TITLES=[['🐣','Opositora novata'],['📚','Devoradora de apuntes'],['🖍️','Subrayadora oficial'],['🎯','Cazadora de netas'],['📖','Terror del Harrison'],['☕','Reina del cafelito'],['🧠','Maestra del simulacro'],['🩺','Futura R1'],['🥼','Doctora en potencia'],['👩‍⚕️','Jefa de Servicio'],['🏆','Leyenda del MIR'],['👑','Dra. Babi, nº 1 de España']];
+const lvStart=n=>75*n*(n-1);                       // nivel 2 = 150 XP, 3 = 450, 4 = 900…
+const lvOf=xp=>{let n=1;while(xp>=lvStart(n+1))n++;return n};
+const titleOf=n=>TITLES[Math.min(n,TITLES.length)-1];
+
+const studyList=()=>state.study.filter(x=>!x.del&&x.h>0).sort((a,b)=>a.id<b.id?-1:1);
+const dayNum=d=>Date.parse(d+'T00:00:00Z')/864e5;
+const dayStr=n=>new Date((n*864e5)).toISOString().slice(0,10);
+
+function streaks(dates){
+  const ds=[...new Set([...dates].map(dayNum))].sort((a,b)=>a-b);
+  let best=0,run=0;ds.forEach((d,i)=>{run=i&&d===ds[i-1]+1?run+1:1;best=Math.max(best,run)});
+  const set=new Set(ds),t=dayNum(today());
+  let cur=0,d=set.has(t)?t:t-1;while(set.has(d)){cur++;d--}
+  return{cur,best,todayDone:set.has(t)};
+}
+
+function gameCtx(){
+  const all=sortedAll(),st=studyList();
+  const nt=series('neta').map(x=>x.neta);
+  const mx=k=>{const v=series(k).map(x=>x[k]);return v.length?Math.max(...v):0};
+  let bestUp=0,up=0,pend=null,comeback=false,run100=0,r=0,jump=0;
+  for(let i=0;i<nt.length;i++){
+    r=nt[i]>=100?r+1:0;run100=Math.max(run100,r);
+    if(!i)continue;
+    up=nt[i]>nt[i-1]?up+1:0;bestUp=Math.max(bestUp,up);
+    jump=Math.max(jump,nt[i]-nt[i-1]);
+    if(pend!==null&&nt[i]>pend){comeback=true;pend=null}
+    if(nt[i]<=nt[i-1]-10&&pend===null)pend=nt[i-1];
+  }
+  const best={};let records=0;
+  all.forEach(x=>KEYS.forEach(k=>{if(has(x,k)){if(best[k]!==undefined&&x[k]>best[k])records++;if(best[k]===undefined||x[k]>best[k])best[k]=x[k]}}));
+  const sk=streaks([...all.map(x=>x.date),...st.map(x=>x.id)]);
+  const hours=st.reduce((a,x)=>a+x.h,0);
+  const c={
+    sims:all.length,maxNeta:nt.length?Math.max(...nt):0,maxAcad:mx('acad'),maxRemir:mx('remir'),
+    bestUp,jump,comeback,run100,records,
+    double:all.filter(x=>has(x,'acad')&&has(x,'remir')&&x.acad>=75&&x.remir>=75).length,
+    full:all.filter(x=>KEYS.every(k=>has(x,k))).length,
+    studyDays:st.length,hours,maxDay:st.reduce((a,x)=>Math.max(a,x.h),0),
+    streak:sk.cur,bestStreak:sk.best,todayDone:sk.todayDone,goal:state.goals.neta,
+  };
+  c.baseXp=all.reduce((a,x)=>a+100+(has(x,'neta')?Math.round(Math.max(0,x.neta)/2):0)+25*['acad','remir'].filter(k=>has(x,k)).length,0)
+    +records*50+st.reduce((a,x)=>a+20+10*Math.min(x.h,12),0);
+  c.lvl=lvOf(c.baseXp);
+  return c;
+}
+
+const A=(id,e,n,d,r,f)=>({id,e,n,d,r,f});
+const ACH=[
+  A('s1','🐣','Primer simulacro','Registra tu primer simulacro','common',c=>[c.sims,1]),
+  A('s5','🖐️','Manita de simulacros','5 simulacros hechos','common',c=>[c.sims,5]),
+  A('s10','🔟','Doble dígito','10 simulacros hechos','rare',c=>[c.sims,10]),
+  A('s25','🏃‍♀️','Corredora de fondo','25 simulacros hechos','epic',c=>[c.sims,25]),
+  A('s50','🏔️','Everest de simulacros','50 simulacros hechos','legend',c=>[c.sims,50]),
+  A('n50','🧊','Rompiendo el hielo','Neta de 50 o más','common',c=>[c.maxNeta,50]),
+  A('n80','🌱','Brotes verdes','Neta de 80 o más','common',c=>[c.maxNeta,80]),
+  A('n100','💯','Centenaria','Neta de 100 o más','rare',c=>[c.maxNeta,100]),
+  A('n120','🚀','Despegando','Neta de 120 o más','rare',c=>[c.maxNeta,120]),
+  A('n140','🌟','Estrella','Neta de 140 o más','epic',c=>[c.maxNeta,140]),
+  A('n160','🔱','¿Eres humana?','Neta de 160 o más','legend',c=>[c.maxNeta,160]),
+  A('goal','🎯','Objetivo cumplido','Alcanza tu objetivo de netas','rare',c=>c.goal?[c.maxNeta,c.goal]:[0,1]),
+  A('up3','🔥','En racha','3 subidas de neta seguidas','common',c=>[c.bestUp,3]),
+  A('up5','🌋','Imparable','5 subidas de neta seguidas','epic',c=>[c.bestUp,5]),
+  A('j15','🎢','Remontada','Sube 15 netas de golpe','rare',c=>[c.jump,15]),
+  A('j25','🪂','Salto cuántico','Sube 25 netas de golpe','epic',c=>[c.jump,25]),
+  A('cb','🧟‍♀️','Resurrección','Tras un bajón de 10+, supera la neta que tenías antes','rare',c=>[c.comeback?1:0,1]),
+  A('r3','📈','Rompe-récords','3 récords personales','rare',c=>[c.records,3]),
+  A('r10','🏆','Coleccionista de récords','10 récords personales','epic',c=>[c.records,10]),
+  A('sol','🧱','Sólida como una roca','3 simulacros seguidos con 100+ de neta','epic',c=>[c.run100,3]),
+  A('a50','🏫','Sobre la mediana','Percentil 50+ en la academia','common',c=>[c.maxAcad,50]),
+  A('a75','🎓','Cuadro de honor','Percentil 75+ en la academia','rare',c=>[c.maxAcad,75]),
+  A('a90','📜','Matrícula de honor','Percentil 90+ en la academia','epic',c=>[c.maxAcad,90]),
+  A('m50','👯','En el pelotón','Percentil 50+ en el ReMIR','common',c=>[c.maxRemir,50]),
+  A('m75','🏁','Cabeza de carrera','Percentil 75+ en el ReMIR','rare',c=>[c.maxRemir,75]),
+  A('m90','👑','Reina del ReMIR','Percentil 90+ en el ReMIR','epic',c=>[c.maxRemir,90]),
+  A('m99','💎','Diamante','Percentil 99+ en el ReMIR','legend',c=>[c.maxRemir,99]),
+  A('dbl','⚔️','Doble amenaza','Percentil 75+ en academia y ReMIR en el mismo simulacro','epic',c=>[c.double,1]),
+  A('f1','🧩','Datos completos','Un simulacro con neta y los dos percentiles','common',c=>[c.full,1]),
+  A('f10','🗂️','Contable oficial','10 simulacros con todos los datos','rare',c=>[c.full,10]),
+  A('d1','📚','Primer día de estudio','Registra un día de estudio','common',c=>[c.studyDays,1]),
+  A('d7','📆','Semana de estudio','7 días de estudio registrados','rare',c=>[c.studyDays,7]),
+  A('d30','🗓️','Mes de estudio','30 días de estudio registrados','epic',c=>[c.studyDays,30]),
+  A('k3','🕯️','Calentando motores','Racha de 3 días seguidos','common',c=>[c.bestStreak,3]),
+  A('k7','🔥','Semana imparable','Racha de 7 días seguidos','rare',c=>[c.bestStreak,7]),
+  A('k14','⚡','Quincena eléctrica','Racha de 14 días seguidos','epic',c=>[c.bestStreak,14]),
+  A('k30','☄️','Cometa','Racha de 30 días seguidos','legend',c=>[c.bestStreak,30]),
+  A('h10','⏱️','Primeras 10 horas','10 horas de estudio','common',c=>[c.hours,10]),
+  A('h50','🕰️','Medio centenar','50 horas de estudio','rare',c=>[c.hours,50]),
+  A('h100','⏳','Centenar de horas','100 horas de estudio','epic',c=>[c.hours,100]),
+  A('h250','🧠','Cerebro galáctico','250 horas de estudio','legend',c=>[c.hours,250]),
+  A('mar','🏃','Maratón','8 horas de estudio en un solo día','rare',c=>[c.maxDay,8]),
+  A('l5','⭐','Nivel 5','Llega al nivel 5','rare',c=>[c.lvl,5]),
+  A('l10','🌠','Nivel 10','Llega al nivel 10','epic',c=>[c.lvl,10]),
+];
+
+function gameState(){
+  const c=gameCtx();
+  const rows=ACH.map(a=>{const [cur,max]=a.f(c);return{...a,cur,max,done:cur>=max}});
+  const xp=c.baseXp+rows.filter(r=>r.done).reduce((s,r)=>s+RAR[r.r].xp,0);
+  return{c,rows,xp,lvl:lvOf(xp)};
+}
+
+function toast(html,ms=3800){
+  const t=document.createElement('div');t.className='toast';t.innerHTML=html;$('toasts').appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),400)},ms);
+}
+const STUDY_MSG=['Cada hora cuenta. Tu yo del futuro (con bata) te lo agradece.','¡Otro día en el bote! El Harrison tiembla.','Café + apuntes + tú = combinación ganadora.','Constancia > motivación. Y tú tienes de las dos.','Una hora más y mereces una pizza 🍕'];
+
+let gameBusy=false;
+function game(){
+  const g=gameState(),{c,rows}=g;
+  const lv=g.lvl,[av,title]=titleOf(lv),from=lvStart(lv),to=lvStart(lv+1),next=titleOf(lv+1)[1];
+  // ---- jugadora
+  $('player').innerHTML=`<div class="av">${av}</div>
+    <div class="pi"><b>Nivel ${lv} · ${title}</b>
+      <div class="xpbar"><i style="width:${Math.min(100,(g.xp-from)/(to-from)*100)}%"></i></div>
+      <small>${g.xp} XP · faltan ${to-g.xp} para ser «${next}»</small></div>
+    <div class="fire ${c.todayDone?'on':''}"><span>${c.streak?'🔥':'🕯️'}</span><b>${c.streak}</b><small>${c.streak===1?'día':'días'}</small></div>`;
+  // ---- misiones
+  const done=rows.filter(r=>r.done).length;
+  const near=rows.filter(r=>!r.done&&r.max>1&&r.cur>0).sort((a,b)=>b.cur/b.max-a.cur/a.max)[0];
+  const nextK=[3,7,14,30,60,100].find(x=>x>c.streak)||c.streak+30;
+  const nt=series('neta').map(x=>x.neta),avg=nt.length?nt.reduce((a,b)=>a+b,0)/nt.length:null;
+  const Q=[
+    [c.todayDone,'📚 Estudia hoy','Registra tu estudio de hoy (o haz un simulacro) para mantener la racha',null],
+    [false,`🔥 Racha de ${nextK} días`,`Llevas ${c.streak}. Constancia, Babi.`,[c.streak,nextK]],
   ];
-  $('badges').innerHTML=B.map(([e,t,on])=>`<div class="badge ${on?'':'off'}"><span>${e}</span>${t}</div>`).join('');
+  if(near)Q.push([false,`${near.e} ${near.n}`,near.d,[near.cur,near.max]]);
+  if(avg!==null)Q.push([nt[nt.length-1]>avg,'📊 Supera tu media',`Tu media es ${fmt(avg)} netas y tu mejor ${fmt(Math.max(...nt))}. A por ellas.`,null]);
+  $('quests').innerHTML=Q.map(([ok,t,d,p])=>`<div class="quest ${ok?'ok':''}"><span class="qc">${ok?'✅':'⬜'}</span><div><b>${t}</b><small>${d}</small>${p?`<div class="xpbar sm"><i style="width:${Math.min(100,p[0]/p[1]*100)}%"></i></div>`:''}</div></div>`).join('');
+  // ---- estudio: tira de 28 días
+  const sd=Object.fromEntries(studyList().map(x=>[x.id,x.h])),simd=new Set(sortedAll().map(x=>x.date));
+  const t0=dayNum(today());let cells='';
+  for(let i=27;i>=0;i--){const d=dayStr(t0-i),h=sd[d]||0,l=h>=6?4:h>=4?3:h>=2?2:h>0?1:0;
+    cells+=`<button type="button" class="cell l${l} ${simd.has(d)?'sim':''}" data-d="${d}" title="${fdate(d)}: ${h?fmt(h)+' h':'sin estudio'}${simd.has(d)?' · simulacro':''}"></button>`}
+  $('strip').innerHTML=cells;
+  $('studysum').textContent=`${fmt(c.hours)} h en total · ${c.studyDays} días de estudio · racha máxima ${c.bestStreak}`;
+  // ---- logros
+  const un=rows.filter(r=>r.done),lo=rows.filter(r=>!r.done);
+  $('achhead').textContent=`🏅 Logros · ${un.length}/${rows.length}`;
+  const card=r=>`<div class="badge ${r.done?'':'off'}" style="--rc:${RAR[r.r].c}"><span>${r.e}</span><div><b>${r.n}</b><small>${r.d}</small>
+    ${!r.done&&r.max>1?`<div class="xpbar sm"><i style="width:${Math.min(100,Math.max(0,r.cur)/r.max*100)}%"></i></div><small>${fmt(Math.max(0,r.cur))}/${fmt(r.max)}</small>`:''}
+    <em>${RAR[r.r].n} · +${RAR[r.r].xp} XP</em></div></div>`;
+  $('badges').innerHTML=un.map(card).join('')||'<p class="hint">Todavía ninguno. El primero está a un simulacro de distancia 🐣</p>';
+  $('locked').innerHTML=lo.map(card).join('');
+  $('lockedbtn').textContent=($('locked').hidden?'Ver ':'Ocultar ')+lo.length+' por desbloquear';
+  $('lockedbtn').hidden=!lo.length;
+  // ---- novedades: avisos y confeti (solo la primera vez que se desbloquea)
+  const seen=new Set(state.seen),fresh=un.filter(r=>!seen.has(r.id));
+  const lvUp=state.lv&&lv>state.lv;
+  if(fresh.length||lv>(state.lv||0)||!state.lv){
+    fresh.forEach(r=>seen.add(r.id));
+    state.seen=[...seen].sort();
+    if(lvUp)toast(`<b>⬆️ ¡Subes a nivel ${lv}!</b><br>${av} ${title}`,4600);
+    if(fresh.length>3)toast(`<b>🏅 ¡${fresh.length} logros nuevos!</b><br>Mira abajo, Babi 👇`,4600);
+    else fresh.forEach(r=>toast(`<b>${r.e} Logro: ${r.n}</b><br>${RAR[r.r].n} · +${RAR[r.r].xp} XP`));
+    if(lvUp||fresh.some(r=>r.r==='epic'||r.r==='legend'))confetti();
+    state.lv=Math.max(state.lv||0,lv);
+    persist();sync();
+  }
+}
+
+/* ---------- estudio ---------- */
+function studyFill(){const h=(state.study.find(x=>x.id===$('sdate').value&&!x.del)||{}).h;$('shours').value=h||''}
+function saveStudy(){
+  const d=$('sdate').value||today(),h=parseFloat($('shours').value);
+  const o=state.study.find(x=>x.id===d);
+  if(isNaN(h)||h<=0){ if(o&&!o.del&&confirm('¿Quitar el estudio de ese día?')){o.del=true;o.u=Date.now()}else if(!o)return }
+  else if(h>24){alert('Un día solo tiene 24 horas, Babi 😅');return}
+  else if(o){o.h=h;o.del=false;o.u=Date.now()}
+  else state.study.push({id:d,h,u:Date.now()});
+  if(!isNaN(h)&&h>0)toast(`<b>📚 +${20+10*Math.min(h,12)} XP</b><br>${STUDY_MSG[Math.floor(Math.random()*STUDY_MSG.length)]}`);
+  save();render();
 }
 
 function confetti(){
@@ -461,6 +679,12 @@ $('f').onsubmit=e=>{
   if(rec)confetti();
 };
 $('cancel').onclick=resetForm;
+$('sdate').onchange=studyFill;
+$('sbtn').onclick=saveStudy;
+document.querySelector('.chips').onclick=e=>{const b=e.target.closest('[data-h]');if(b)$('shours').value=b.dataset.h};
+$('strip').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;$('sdate').value=b.dataset.d;studyFill();$('shours').focus()};
+$('lockedbtn').onclick=()=>{$('locked').hidden=!$('locked').hidden;game_label()};
+const game_label=()=>{const n=ACH.length-document.querySelectorAll('#badges .badge').length;$('lockedbtn').textContent=($('locked').hidden?'Ver ':'Ocultar ')+n+' por desbloquear'};
 const calc=()=>{const a=parseFloat($('ok').value),e=parseFloat($('ko').value);
   if(isNaN(a))return;const n=Math.round((a-(isNaN(e)?0:e)/3)*100)/100;
   $('neta').value=n;$('calcout').textContent=`${a} − ${isNaN(e)?0:e}/3 = ${fmt(n)} netas ✅`};
@@ -481,12 +705,12 @@ $('list').onclick=e=>{
   }
 };
 $('goal').onchange=()=>{const v=parseFloat($('goal').value);state.goals[state.tab]=isNaN(v)?null:v;state.gu=Date.now();save();render()};
-$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({sims:state.sims.filter(x=>!x.del),goals:state.goals},null,2)],{type:'application/json'}));a.download='babimir-backup.json';a.click()};
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({sims:state.sims.filter(x=>!x.del),study:state.study.filter(x=>!x.del),goals:state.goals},null,2)],{type:'application/json'}));a.download='babimir-backup.json';a.click()};
 $('imp').onclick=()=>$('file').click();
 $('file').onchange=async e=>{
   try{const s=JSON.parse(await e.target.files[0].text());
     if(!Array.isArray(s.sims))throw 0;
-    state={sims:mergeSims(state.sims,s.sims),goals:{...state.goals,...(s.goals||(s.goal!=null?{neta:s.goal}:{}))},gu:Date.now(),tab:M[s.tab]?s.tab:'neta'};
+    state={...state,sims:mergeSims(state.sims,s.sims),study:mergeSims(state.study,s.study||[]),goals:{...state.goals,...(s.goals||(s.goal!=null?{neta:s.goal}:{}))},gu:Date.now(),tab:M[s.tab]?s.tab:'neta'};
     save();render()}
   catch(_){alert('Ese archivo no parece mío 🤨')}
   e.target.value=''};
@@ -495,8 +719,8 @@ let inited=false;
 function init(){
   if(inited)return;inited=true;
   $('tag').textContent=tags[Math.floor(Math.random()*tags.length)];
-  $('date').value=today();
-  render();
+  $('date').value=today();$('sdate').value=today();
+  render();studyFill();
   let rw=innerWidth;addEventListener('resize',()=>{if(innerWidth!==rw){rw=innerWidth;render()}});
 }
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
