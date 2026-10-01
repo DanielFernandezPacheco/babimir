@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff4f9a">
 <meta name="robots" content="noindex">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Babi MIR">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Babi vs. el MIR</title>
 <meta name="description" content="El tracker oficial (y muy serio) de los simulacros MIR de Babi.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>">
@@ -73,7 +79,10 @@ li .n small{display:block;color:var(--muted);font-weight:600;font-size:.78rem}
 li .v{font-size:1.15rem;font-weight:900}
 li .d{font-size:.78rem;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap}
 .up{background:#d6f7e8;color:#0b7a50}.down{background:#ffe0e0;color:#b32a2a}.eq{background:var(--line);color:var(--muted)}
-li button.x{background:transparent;color:var(--muted);border:0;box-shadow:none;padding:0;width:44px;min-height:44px;font-size:1.1rem}
+li button.x{background:transparent;color:var(--muted);border:0;box-shadow:none;padding:0;width:38px;min-height:44px;font-size:1.05rem}
+li .r{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+li .n{overflow-wrap:anywhere}
+li .n small{line-height:1.5}
 .empty{text-align:center;color:var(--muted);padding:20px}
 footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
 .conf{position:fixed;top:-20px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall linear forwards}
@@ -90,6 +99,18 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
 .shake{animation:shake .4s}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 #err{color:var(--red);font-weight:800;min-height:1.3em;margin:0 0 8px}
+.pill{display:inline-block;background:var(--yellow);color:#2b2140;border:2px solid var(--ink);border-radius:99px;padding:6px 14px;font-weight:800;font-size:.9rem;margin:0 0 16px;box-shadow:0 3px 0 var(--ink)}
+.trend{margin:12px 0 0;font-size:.92rem;font-weight:700}
+details{grid-column:1/-1;border:2px dashed var(--line);border-radius:12px;padding:8px 12px}
+summary{cursor:pointer;font-weight:800;font-size:.85rem;color:var(--muted);min-height:32px;display:flex;align-items:center}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.calc small{grid-column:1/-1;color:var(--muted)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.badge{border:2px solid var(--ink);border-radius:14px;padding:10px;font-size:.82rem;font-weight:800;display:flex;gap:8px;align-items:center;background:var(--yellow);color:#2b2140}
+.badge span{font-size:1.5rem}
+.badge.off{background:transparent;color:var(--muted);border-style:dashed;border-color:var(--line);filter:grayscale(1);opacity:.7}
+.showpw{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;margin:-4px 0 12px;font-size:.85rem}
+.showpw input{width:20px;min-height:20px;padding:0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -102,6 +123,7 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
     <p>Si no eres Babi, media vuelta. El estetoscopio es para mirar, no para tocar.</p>
     <form id="lf" style="display:block">
       <input id="pw" type="password" placeholder="Contraseña" autocomplete="current-password" autocapitalize="none" autocorrect="off" enterkeyhint="go">
+      <label class="showpw"><input type="checkbox" id="showpw"> Mostrar contraseña</label>
       <div id="err"></div>
       <button>Entrar 🩺</button>
     </form>
@@ -111,6 +133,7 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
 <main id="app" hidden>
   <h1>Babi <span>vs.</span> el MIR 🩺</h1>
   <p class="tag" id="tag"></p>
+  <div class="pill" id="count" hidden></div>
 
   <div class="tabs" id="tabs"></div>
 
@@ -123,7 +146,8 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
   <section class="card">
     <h2 id="ctitle">📈 Evolución</h2>
     <div class="chartwrap" id="cw"><svg id="chart"></svg><div class="tip" id="tip"></div></div>
-    <div class="goalrow">🎯 Objetivo: <input id="goal" type="number" step="any" inputmode="decimal"></div>
+    <p class="trend" id="trend"></p>
+    <div class="goalrow">🎯 Objetivo: <input id="goal" type="number" step="any" inputmode="decimal">&nbsp;📅 Examen: <input id="exam" type="date" style="width:auto"></div>
   </section>
 
   <section class="card">
@@ -134,9 +158,22 @@ footer{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10
       <label>Neta<input id="neta" type="number" step="0.01" min="-70" max="200" inputmode="decimal" placeholder="—"></label>
       <label>Perc. academia<input id="acad" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
       <label>Perc. ReMIR<input id="remir" type="number" step="0.1" min="0" max="100" inputmode="decimal" placeholder="—"></label>
+      <details>
+        <summary>🧮 Calcular la neta desde aciertos y errores</summary>
+        <div class="calc">
+          <label>Aciertos<input id="ok" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
+          <label>Errores<input id="ko" type="number" min="0" max="210" inputmode="numeric" placeholder="0"></label>
+          <small id="calcout">Neta = aciertos − errores/3. Se rellena sola arriba.</small>
+        </div>
+      </details>
       <div class="full formbtns"><button id="save">Guardar 💾</button><button type="button" class="ghost" id="cancel" hidden>Cancelar</button></div>
     </form>
     <p class="hint">Rellena lo que tengas: los percentiles suelen llegar un día después, así que luego puedes darle a ✏️ en el historial y completarlos. Neta = aciertos − errores/3. Percentil alto = mejor.</p>
+  </section>
+
+  <section class="card">
+    <h2>🏅 Logros</h2>
+    <div class="badges" id="badges"></div>
   </section>
 
   <section class="card">
@@ -293,11 +330,15 @@ function render(){
   $('list').innerHTML=all.length?[...all].reverse().map(x=>{
     const has_k=has(x,k),idx=s.indexOf(x),p=idx>0?s[idx-1]:null,d=p?x[k]-p[k]:null;
     const badge=d===null?'':`<span class="d ${d>0?'up':d<0?'down':'eq'}">${d>0?'▲ +':d<0?'▼ ':'= '}${fmt(d)}</span>`;
-    const sub=KEYS.map(t=>`${M[t].icon} ${has(x,t)?fmt(x[t]):'–'}`).join(' · ');
-    return`<li><div class="n">${esc(x.name)}<small>${fdate(x.date)} · ${sub}</small></div>${badge}<span class="v">${has_k?fmt(x[k]):'–'}</span>
+    const sub=KEYS.map(t=>`${M[t].icon}\u00a0${has(x,t)?fmt(x[t]):'–'}`).join(' ');
+    return`<li><div class="n">${esc(x.name)}<small>${fdate(x.date)} · ${sub}</small></div><div class="r"><span class="v">${has_k?fmt(x[k]):'–'}</span>${badge}</div>
       <button class="x" data-ed="${x.id}" title="Editar">✏️</button><button class="x" data-id="${x.id}" title="Borrar">🗑️</button></li>`}).join('')
     :'<li class="empty">Aún no hay simulacros. Los 200 de la tarde no se hacen solos 📚</li>';
   chart(s,k);
+  trend(s,k);
+  countdown();
+  badges();
+  $('exam').value=state.goals.exam||'';
 }
 
 function chart(s,k){
@@ -322,6 +363,8 @@ function chart(s,k){
   const area=path+` L${pts[pts.length-1][0]},${Y(lo)} L${pts[0][0]},${Y(lo)} Z`;
   g+=`<defs><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m.color}" stop-opacity=".35"/><stop offset="1" stop-color="${m.color}" stop-opacity="0"/></linearGradient></defs>`;
   if(s.length>1)g+=`<path d="${area}" fill="url(#gr)"/><path d="${path}" fill="none" stroke="${m.color}" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const tr=fit(s,k);
+  if(tr&&s.length>=3){const a=tr.from;g+=`<line x1="${X(a)}" y1="${Y(tr.at(a))}" x2="${X(s.length-1)}" y2="${Y(tr.at(s.length-1))}" stroke="${ink}" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" opacity=".55"/>`}
   const bi=s.reduce((b,x,i)=>x[k]>s[b][k]?i:b,0);
   const every=Math.ceil(s.length/Math.max(1,Math.floor((W-L-R)/54)));
   pts.forEach((p,i)=>{
@@ -339,6 +382,52 @@ function chart(s,k){
   });
 }
 
+/* regresión lineal sobre los últimos 6 simulacros */
+function fit(s,k){
+  const n=Math.min(6,s.length);if(n<3)return null;
+  const from=s.length-n,ys=s.slice(from).map(x=>x[k]);
+  const mx=(n-1)/2,my=ys.reduce((a,b)=>a+b,0)/n;
+  let num=0,den=0;ys.forEach((y,i)=>{num+=(i-mx)*(y-my);den+=(i-mx)**2});
+  const m=num/den,b=my-m*mx;
+  return{from,slope:m,at:i=>b+m*(i-from)};
+}
+function trend(s,k){
+  const el=$('trend'),t=fit(s,k),goal=state.goals[k];
+  if(!t){el.textContent=s.length?'🔮 Con 3 simulacros empiezo a adivinarte el futuro.':'';return}
+  const last=s[s.length-1][k],u=k==='neta'?'netas':'puntos';
+  const sl=(t.slope>=0?'+':'')+fmt(t.slope);
+  let msg=`🔮 Tendencia reciente: ${sl} ${u} por simulacro.`;
+  if(goal&&last>=goal)msg+=' ¡Objetivo conseguido! Sube la vara 😈';
+  else if(goal&&t.slope>0.05){const n=Math.ceil((goal-last)/t.slope);msg+=` A este ritmo llegas al objetivo en ~${n} simulacro${n===1?'':'s'}.`}
+  else if(goal)msg+=' Ahora mismo no sube: toca cambiar de táctica (o de café) ☕';
+  el.textContent=msg;
+}
+function countdown(){
+  const el=$('count'),d=state.goals.exam;
+  if(!d){el.hidden=true;return}
+  const days=Math.round((new Date(d+'T00:00')-new Date(today()+'T00:00'))/864e5);
+  el.hidden=false;
+  el.textContent=days>1?`⏳ Faltan ${days} días para el MIR`:days===1?'⏳ ¡MAÑANA es el MIR! Descansa y duerme 😴':days===0?'🍀 ¡HOY ES EL MIR! Tú puedes, Dra. Babi':'🎉 ¡El MIR ya pasó! Eres una crack';
+}
+function badges(){
+  const all=sortedAll(),nt=series('neta'),vals=k=>series(k).map(x=>x[k]);
+  const mx=k=>{const v=vals(k);return v.length?Math.max(...v):-Infinity};
+  let streak=0,best=0;for(let i=1;i<nt.length;i++){streak=nt[i].neta>nt[i-1].neta?streak+1:0;best=Math.max(best,streak)}
+  const jump=nt.some((x,i)=>i&&x.neta-nt[i-1].neta>=15);
+  const goal=state.goals.neta;
+  const B=[
+    ['🐣','Primer simulacro',all.length>=1],
+    ['🔟','10 simulacros',all.length>=10],
+    ['💯','Neta de 100+',mx('neta')>=100],
+    ['🎯','Objetivo de netas',!!goal&&mx('neta')>=goal],
+    ['🔥','3 subidas seguidas',best>=3],
+    ['🎢','Remontada (+15)',jump],
+    ['🏫','Academia: top 10%',mx('acad')>=90],
+    ['👑','Reina del ReMIR (90+)',mx('remir')>=90],
+  ];
+  $('badges').innerHTML=B.map(([e,t,on])=>`<div class="badge ${on?'':'off'}"><span>${e}</span>${t}</div>`).join('');
+}
+
 function confetti(){
   const colors=['#ff4f9a','#7c4dff','#ffd23f','#19b37a','#ff5d5d'];
   for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
@@ -349,7 +438,7 @@ function confetti(){
 
 /* ---------- formulario ---------- */
 function resetForm(){
-  editing=null;$('f').reset();$('date').value=today();
+  editing=null;$('f').reset();$('calcout').textContent='Neta = aciertos − errores/3. Se rellena sola arriba.';$('date').value=today();
   $('ftitle').textContent='➕ Nuevo simulacro';$('save').textContent='Guardar 💾';$('cancel').hidden=true;
 }
 const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
@@ -372,6 +461,12 @@ $('f').onsubmit=e=>{
   if(rec)confetti();
 };
 $('cancel').onclick=resetForm;
+const calc=()=>{const a=parseFloat($('ok').value),e=parseFloat($('ko').value);
+  if(isNaN(a))return;const n=Math.round((a-(isNaN(e)?0:e)/3)*100)/100;
+  $('neta').value=n;$('calcout').textContent=`${a} − ${isNaN(e)?0:e}/3 = ${fmt(n)} netas ✅`};
+$('ok').oninput=$('ko').oninput=calc;
+$('showpw').onchange=e=>$('pw').type=e.target.checked?'text':'password';
+$('exam').onchange=()=>{state.goals.exam=$('exam').value||null;state.gu=Date.now();save();render()};
 
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;state.tab=b.dataset.t;save();render()};
 $('list').onclick=e=>{
@@ -404,6 +499,7 @@ function init(){
   render();
   let rw=innerWidth;addEventListener('resize',()=>{if(innerWidth!==rw){rw=innerWidth;render()}});
 }
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 /* arranque */
 let saved='';try{saved=localStorage.getItem(AUTH)||''}catch(_){}
 if(saved){login(saved).catch(e=>{
